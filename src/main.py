@@ -4,14 +4,18 @@ from typing import Annotated
 from pydantic import BaseModel
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from .config import GOOGLE_CLIENT_ID, SWAGGER_HELPER_URL
-
+from .config import GOOGLE_CLIENT_ID, SWAGGER_HELPER_URL, SECRET_KEY, ALGORITHM
+from datetime import datetime, timedelta, timezone
+from jose import JWTError, jwt
 
 app = FastAPI()
 
 oauth2_schema = HTTPBearer(
     description=f"""
-# [Sign in with Google]({SWAGGER_HELPER_URL})
+#### How to get access token
+1. [Sign in with Google]({SWAGGER_HELPER_URL})
+2. Token from step 1 should be used in `/sign-in` endpoint
+3. Access token from `/sign-in` insert into input below
 """,
 )
 
@@ -38,3 +42,14 @@ def sign_in(sign_in: SignIn):
 @app.get("/me")
 def get_me(token: Annotated[str, Depends(oauth2_schema)]):
     return token
+
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
