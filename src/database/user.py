@@ -27,8 +27,6 @@ def get_user_by_id(user_id: int, session: LocalSession):
 
 
 def create_user(user: User, session: LocalSession):
-    print('=' * 20)
-    print(user)
     session.add(user)
     session.commit()
     session.refresh(user)
