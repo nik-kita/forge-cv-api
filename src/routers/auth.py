@@ -1,5 +1,7 @@
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import APIRouter, Depends
 from fastapi.security import (
+    HTTPAuthorizationCredentials,
     HTTPBearer,
 )
 from google.oauth2 import id_token
@@ -17,11 +19,10 @@ from fastapi import HTTPException
 
 from pydantic import BaseModel
 from datetime import timedelta
-from sqlmodel import Session, select
 from src.database.user import User, get_user_by_id
 from src.utils.jwt import get_payload_from_token, create_token
-from src.database.db import engine
-
+from src.database.db import ActualSession, LocalSession
+from src.database.user import create_user, get_user_by_email
 
 router = APIRouter()
 
@@ -43,47 +44,58 @@ class Refresh(BaseModel):
     refresh_token: str
 
 
+def get_me(
+    auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(oauth2_schema)],
+    session: ActualSession,
+):
+    payload = get_payload_from_token(
+        token=auth_credentials.credentials,
+        secret=ACCESS_SECRET_KEY,
+        algorithms=[ALGORITHM],
+    )
+    print(payload)
+    me = get_user_by_id(payload["id"], session)
+    return me
+
+
+Me = Annotated[User, Depends(get_me)]
+
+
 @router.post("/sign-in")
-def sign_in(body: SignIn):
+def sign_in(
+    body: SignIn,
+    session: ActualSession,
+):
+    data = None
     try:
         data = id_token.verify_oauth2_token(
             body.credential, requests.Request(), GOOGLE_CLIENT_ID
         )
-
-        user = User(sub=data["sub"], email=data["email"])
-
-        with Session(engine) as session:
-            prev_user = session.exec(
-                select(User).where(User.email == user.email)
-            ).first()
-
-            if prev_user is None:
-                session.add(user)
-                session.commit()
-                session.refresh(user)
-            else:
-                user = prev_user
-
-        access_token = create_token(
-            data=user.model_dump(),
-            secret=ACCESS_SECRET_KEY,
-            algorithm=ALGORITHM,
-            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-        )
-        refresh_token = create_token(
-            data=user.model_dump(),
-            secret=REFRESH_SECRET_KEY,
-            algorithm=ALGORITHM,
-            expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
-        )
-
-        return {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer",
-        }
     except ValueError:
         raise HTTPException(401, "Invalid token")
+
+    user = get_user_by_email(data["email"], session) or create_user(
+        User(email=data["email"], sub=data["sub"]), session
+    )
+
+    access_token = create_token(
+        data=user.model_dump(),
+        secret=ACCESS_SECRET_KEY,
+        algorithm=ALGORITHM,
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    refresh_token = create_token(
+        data=user.model_dump(),
+        secret=REFRESH_SECRET_KEY,
+        algorithm=ALGORITHM,
+        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+    )
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
 @router.post("/refresh")
