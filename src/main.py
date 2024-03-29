@@ -1,5 +1,8 @@
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import (
+    HTTPBearer,
+    HTTPAuthorizationCredentials,
+)
 from typing import Annotated
 from pydantic import BaseModel
 from google.oauth2 import id_token
@@ -7,14 +10,15 @@ from google.auth.transport import requests
 from .config import (
     GOOGLE_CLIENT_ID,
     SWAGGER_HELPER_URL,
-    SECRET_KEY,
+    ACCESS_SECRET_KEY,
+    REFRESH_SECRET_KEY,
     ALGORITHM,
     ACCESS_TOKEN_EXPIRE_MINUTES,
+    REFRESH_TOKEN_EXPIRE_DAYS,
 )
-from datetime import datetime, timedelta, timezone
-from jose import JWTError, jwt
+from datetime import timedelta
 from sqlmodel import create_engine, SQLModel, Field, Session, select
-
+from .utils.jwt import get_payload_from_token, create_token
 
 app = FastAPI()
 
@@ -67,59 +71,86 @@ def sign_in(sign_in: SignIn):
         user = User(sub=idinfo["sub"], email=idinfo["email"])
 
         with Session(engine) as session:
-            user = session.exec(select(User).where(User.email == user.email)).first()
+            prev_user = session.exec(
+                select(User).where(User.email == user.email)
+            ).first()
 
-            if user.id is None:
+            if prev_user is None:
                 session.add(user)
                 session.commit()
                 session.refresh(user)
+            else:
+                user = prev_user
 
-        access_token = create_access_token(
+        access_token = create_token(
             data=user.model_dump(),
+            secret=ACCESS_SECRET_KEY,
+            algorithm=ALGORITHM,
             expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
         )
+        refresh_token = create_token(
+            data=user.model_dump(),
+            secret=REFRESH_SECRET_KEY,
+            algorithm=ALGORITHM,
+            expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+        )
 
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+        }
     except ValueError:
         raise HTTPException(401, "Invalid token")
+
+
+class Refresh(BaseModel):
+    refresh_token: str
+
+
+@app.post("/refresh")
+def refresh(body: Refresh):
+    payload = get_payload_from_token(
+        token=body.refresh_token,
+        secret=REFRESH_SECRET_KEY,
+        algorithms=[ALGORITHM],
+    )
+    user = get_user_by_id(payload["id"])
+
+    if user is None:
+        raise HTTPException(401, "Invalid token")
+
+    access_token = create_token(
+        data=user,
+        secret=ACCESS_SECRET_KEY,
+        algorithm=ALGORITHM,
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+    refresh_token = create_token(
+        data=user,
+        secret=REFRESH_SECRET_KEY,
+        algorithm=ALGORITHM,
+        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+    )
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
 @app.get("/me")
 async def get_me(
     auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(oauth2_schema)]
 ):
-    id = get_id_from_token(auth_credentials.credentials)
-    me = get_user_by_id(id)
-    return me
-
-
-def create_access_token(data: dict, expires_delta: timedelta):
-    to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + expires_delta
-    to_encode.update({"exp": expire})
-    print(to_encode)
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-
-def get_id_from_token(token: str):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+    payload = get_payload_from_token(
+        token=auth_credentials.credentials,
+        secret=ACCESS_SECRET_KEY,
+        algorithms=[ALGORITHM],
     )
-    id: str | None = None
-
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(payload)
-        id: str = payload.get("id")
-        if id is None:
-            raise credentials_exception
-    except JWTError:
-        raise credentials_exception
-
-    return id
+    me = get_user_by_id(payload["id"])
+    return me
 
 
 def get_user_by_email(email: str):
