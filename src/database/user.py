@@ -7,6 +7,8 @@ class BaseUser(SQLModel):
 
 
 class User(BaseUser, table=True):
+    __tablename__ = "users"
+
     email: str | None = Field(str, unique=True, nullable=True)
     sub: str | None = Field(str, unique=True, nullable=True)
 

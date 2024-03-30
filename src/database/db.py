@@ -1,10 +1,13 @@
 from sqlmodel import create_engine, SQLModel, Session
 from typing import Annotated
 from fastapi import Depends
+from src.config import SQLALCHEMY_URL
 
-sqlite_file_name = "database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-engine = create_engine(sqlite_url, echo=True)
+
+engine = create_engine(
+    SQLALCHEMY_URL,
+    echo=SQLALCHEMY_URL.startswith("sqlite"),
+)
 
 
 class LocalSession(Session):
@@ -17,8 +20,3 @@ def get_session():
 
 
 ActualSession = Annotated[LocalSession, Depends(get_session)]
-
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-
