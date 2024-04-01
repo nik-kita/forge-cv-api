@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from sqlmodel import select
 
 from src.database.db import ActualSession
-from src.database.user import User
+from src.database.models.user import User
 from .routers.auth import Me, router as auth_router
 from contextlib import asynccontextmanager
 from os import system
@@ -12,7 +12,6 @@ from os import system
 async def lifespan(app: FastAPI):
     system("alembic upgrade head")
     yield
-    print("Shutting down")
 
 
 app = FastAPI(lifespan=lifespan)

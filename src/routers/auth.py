@@ -19,10 +19,9 @@ from fastapi import HTTPException
 
 from pydantic import BaseModel
 from datetime import timedelta
-from src.database.user import User, get_user_by_id
+from src.database.models.user import User, create_user, get_user_by_email, get_user_by_id
 from src.utils.jwt import get_payload_from_token, create_token
-from src.database.db import ActualSession, LocalSession
-from src.database.user import create_user, get_user_by_email
+from src.database.db import ActualSession
 
 router = APIRouter()
 
@@ -53,7 +52,6 @@ def get_me(
         secret=ACCESS_SECRET_KEY,
         algorithms=[ALGORITHM],
     )
-    print(payload)
     me = get_user_by_id(payload["id"], session)
     return me
 

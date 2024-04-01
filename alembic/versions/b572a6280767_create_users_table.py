@@ -6,8 +6,10 @@ Create Date: 2024-03-30 01:27:32.425115
 
 """
 
+from src.database.db import get_session
+from src.database.models.versions.user_b572a6280767 import User
 from typing import Sequence, Union
-
+from sqlmodel import SQLModel
 from alembic import op
 import sqlalchemy as sa
 
@@ -20,13 +22,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        "users",
-        sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("email", sa.String, unique=True, nullable=True),
-        sa.Column("sub", sa.String, unique=True, nullable=True),
-    )
+    SQLModel.metadata.create_all(get_session())    
 
 
 def downgrade() -> None:
-    op.drop_table("users")
+    op.drop_table(User.__tablename__)

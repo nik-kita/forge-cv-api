@@ -10,13 +10,9 @@ engine = create_engine(
 )
 
 
-class LocalSession(Session):
-    pass
-
-
 def get_session():
-    with LocalSession(engine) as session:
+    with Session(engine) as session:
         yield session
 
 
-ActualSession = Annotated[LocalSession, Depends(get_session)]
+ActualSession = Annotated[Session, Depends(get_session)]
