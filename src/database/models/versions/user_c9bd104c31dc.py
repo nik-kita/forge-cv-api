@@ -1,11 +1,11 @@
-from sqlmodel import SQLModel, Field, select, Session
+from sqlmodel import SQLModel, Field
 
 
-class BaseUser(SQLModel):
+class BaseUserc9bd104c31dc(SQLModel):
     id: int | None = Field(default=None, primary_key=True)
 
 
-class User(BaseUser, table=True):
+class Userc9bd104c31dc(BaseUserc9bd104c31dc, table=True):
     __tablename__ = "users"
 
     email: str | None = Field(str, unique=True, nullable=True)

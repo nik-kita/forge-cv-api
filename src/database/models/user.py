@@ -1,8 +1,8 @@
-from sqlmodel import SQLModel, Field, select, Session
-from .versions.user_b572a6280767 import User as VersionedUser
+from sqlmodel import select, Session
+from .versions.user_c9bd104c31dc import Userc9bd104c31dc, BaseUserc9bd104c31dc
 
-User = VersionedUser
-
+BaseUser = BaseUserc9bd104c31dc
+User = Userc9bd104c31dc
 
 def get_user_by_email(email: str, session: Session):
     sql_query = select(User).where(User.email == email)
