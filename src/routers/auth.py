@@ -22,6 +22,7 @@ from datetime import timedelta
 from src.database.models.user import User, create_user, get_user_by_email, get_user_by_id
 from src.utils.jwt import get_payload_from_token, create_token
 from src.database.db import ActualSession
+from src.database.models.auth_provider import AuthProviderRaw as AuthProvider
 
 router = APIRouter()
 
@@ -37,6 +38,7 @@ oauth2_schema = HTTPBearer(
 
 class SignIn(BaseModel):
     credential: str
+    auth_provider: AuthProvider
 
 
 class Refresh(BaseModel):
@@ -73,7 +75,8 @@ def sign_in(
         raise HTTPException(401, "Invalid token")
 
     user = get_user_by_email(data["email"], session) or create_user(
-        User(email=data["email"], sub=data["sub"]), session
+        User(email=data["email"], sub=data["sub"],
+             auth_provider=body.auth_provider), session
     )
 
     access_token = create_token(
