@@ -23,8 +23,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.add_column(Userced2df492986b.__tablename__, sa.Column(
-        'auth_provider', Enum(AuthProvider4451bbbfbdbd), nullable=False))
+        'auth', Enum(AuthProvider4451bbbfbdbd), nullable=False))
 
 
 def downgrade() -> None:
-    op.drop_column(Userced2df492986b.__tablename__, 'auth_provider')
+    op.drop_column(Userced2df492986b.__tablename__, 'auth')

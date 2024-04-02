@@ -76,7 +76,7 @@ def sign_in(
 
     user = get_user_by_email(data["email"], session) or create_user(
         User(email=data["email"], sub=data["sub"],
-             auth_provider=body.auth_provider), session
+             auth=body.auth_provider), session
     )
 
     access_token = create_token(

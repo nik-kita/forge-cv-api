@@ -11,6 +11,6 @@ AuthProvider = Enum(AuthProvider4451bbbfbdbd)
 
 class Userced2df492986b(BaseUsered2df492986b):
     __tablename__ = "users"
-    email: str | None = Field(str, unique=True, nullable=True)
-    sub: str | None = Field(str, unique=True, nullable=True)
-    auth_provider: AuthProvider4451bbbfbdbd = Enum(AuthProvider4451bbbfbdbd)
+    email: str | None = Field(str, unique=True)
+    sub: str | None = Field(str, unique=True)
+    auth: AuthProvider4451bbbfbdbd = Enum(AuthProvider4451bbbfbdbd)

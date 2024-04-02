@@ -6,5 +6,5 @@ class BaseUserc9bd104c31dc(SQLModel):
 
 
 class Userc9bd104c31dc(BaseUserc9bd104c31dc):
-    email: str | None = Field(str, unique=True, nullable=True)
-    sub: str | None = Field(str, unique=True, nullable=True)
+    email: str | None = Field(str, unique=True)
+    sub: str | None = Field(str, unique=True)
