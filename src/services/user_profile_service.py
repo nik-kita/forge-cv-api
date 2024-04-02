@@ -1,5 +1,13 @@
+from pydantic import BaseModel
+from src.database.db import ActualSession
+from src.database.models.avatar import Avatar
+from src.database.models.contacts_kvd import ContactsKvd, ContactsKvd, ContactsKvdRes
+from src.database.models.education import Education
+from src.database.models.experience import Experience
+from src.database.models.language import Language
 from src.database.models.profile import Profile
-from sqlmodel import Session, select
+from sqlmodel import Session, select, SQLModel
+from src.database.models.skill import Skill
 from src.database.models.user import User
 
 
@@ -19,6 +27,41 @@ def get_user_profile(*, user_id: int, profile_name: str, session: Session):
     )
     profile = session.exec(sql_query).first()
 
-    print(profile)
+    return profile
+
+
+class UpsertProfile(BaseModel):
+    contacts: list[ContactsKvd] | None = None
+    skills: list[Skill] | None = None
+    education: list[Education] | None = None
+    experience: list[Experience] | None = None
+    languages: list[Language] | None = None
+    avatar: Avatar | None = None
+
+
+def upsert_profile(
+    *,
+    user_id: int,
+    profile_name: str,
+    data: UpsertProfile,
+    session: Session,
+):
+    profile = get_user_profile(
+        user_id=user_id, profile_name=profile_name, session=session)
+
+    if not profile:
+        profile = Profile(
+            user_id=user_id,
+            name=profile_name,
+        )
+
+    if data.contacts:
+        for c in data.contacts:
+            c.user_id = user_id
+        profile.contacts.extend(data.contacts)
+
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
 
     return profile

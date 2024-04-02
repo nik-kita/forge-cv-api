@@ -23,7 +23,6 @@ app.include_router(profile_router, prefix="/profile", tags=["profile"])
 
 @app.get("/me", response_model=UserRes)
 async def get_me(me: Me):
-    # print(me.profiles)
 
     return me
 

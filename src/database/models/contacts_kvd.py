@@ -9,6 +9,10 @@ class ContactsKvd(BaseContactsKvd, table=True):
     __tablename__ = "contacts_kvd"
 
 
+class ContactsKvdRes(BaseContactsKvd):
+    pass
+
+
 def create_contact(contact: ContactsKvd, session: Session):
     session.add(contact)
     session.commit()

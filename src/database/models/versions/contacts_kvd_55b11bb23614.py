@@ -7,4 +7,4 @@ class ContactsKvd_55b11bb23614(SQLModel):
     profile_id: int | None = Field(foreign_key='profiles.id')
     key: str = Field(nullable=False)
     value: str = Field(nullable=False)
-    details: str | None
+    details: str | None = None

@@ -78,8 +78,6 @@ def sign_in(
 
     user = get_user_by_email(data["email"], session)
 
-    print(user)
-
     if not user:
         user = create_user(
             User(email=data["email"], sub=data["sub"],
@@ -118,25 +116,28 @@ def sign_in(
 
 
 @router.post("/refresh")
-def refresh(body: Refresh):
+def refresh(body: Refresh, session: ActualSession):
     payload = get_payload_from_token(
         token=body.refresh_token,
         secret=REFRESH_SECRET_KEY,
         algorithms=[ALGORITHM],
     )
-    user = get_user_by_id(payload["id"])
+    user = get_user_by_id(payload["id"], session=session)
 
     if user is None:
         raise HTTPException(401, "Invalid token")
 
+    data = {
+        "id": user.id,
+    }
     access_token = create_token(
-        data=user,
+        data=data,
         secret=ACCESS_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = create_token(
-        data=user,
+        data=data,
         secret=REFRESH_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
