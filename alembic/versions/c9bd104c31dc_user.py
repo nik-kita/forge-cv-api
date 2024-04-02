@@ -21,9 +21,13 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+class User(Userc9bd104c31dc, table=True):
+    __tablename__ = 'users'
+
+
 def upgrade() -> None:
-    Userc9bd104c31dc.metadata.create_all(engine)
+    User.metadata.create_all(engine)
 
 
 def downgrade() -> None:
-    op.drop_table(Userc9bd104c31dc.__tablename__)
+    op.drop_table(User.__tablename__)

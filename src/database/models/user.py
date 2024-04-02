@@ -1,8 +1,12 @@
 from sqlmodel import select, Session
-from .versions.user_c9bd104c31dc import Userc9bd104c31dc, BaseUserc9bd104c31dc
+from .versions.user_ed2df492986b import Userced2df492986b, BaseUsered2df492986b
 
-BaseUser = BaseUserc9bd104c31dc
-User = Userc9bd104c31dc
+BaseUser = BaseUsered2df492986b
+
+
+class User(Userced2df492986b, table=True):
+    __tablename__ = "users"
+
 
 def get_user_by_email(email: str, session: Session):
     sql_query = select(User).where(User.email == email)
