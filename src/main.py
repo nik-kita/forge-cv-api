@@ -5,6 +5,7 @@ from src.database.db import ActualSession
 from src.database.models.profile import Profile
 from src.database.models.user import UserRes, User
 from .routers.auth import Me, router as auth_router
+from .routers.profile import router as profile_router
 from contextlib import asynccontextmanager
 from os import system
 
@@ -17,6 +18,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(profile_router, prefix="/profile", tags=["profile"])
 
 
 @app.get("/me", response_model=UserRes)
