@@ -19,7 +19,9 @@ from fastapi import HTTPException
 
 from pydantic import BaseModel
 from datetime import timedelta
+from src.database.models.contacts_kvd import create_contact, ContactsKvd
 from src.database.models.user import User, create_user, get_user_by_email, get_user_by_id
+from src.services.user_profile_service import gen_default_profile
 from src.utils.jwt import get_payload_from_token, create_token
 from src.database.db import ActualSession
 from src.database.models.auth_provider import AuthProviderRaw as AuthProvider
@@ -74,19 +76,35 @@ def sign_in(
     except ValueError:
         raise HTTPException(401, "Invalid token")
 
-    user = get_user_by_email(data["email"], session) or create_user(
-        User(email=data["email"], sub=data["sub"],
-             auth=body.auth_provider), session
-    )
+    user = get_user_by_email(data["email"], session)
 
+    print(user)
+
+    if not user:
+        user = create_user(
+            User(email=data["email"], sub=data["sub"],
+                 auth=body.auth_provider), session
+        )
+        profile = gen_default_profile(user=user, session=session)
+
+        if user.email:
+            create_contact(contact=ContactsKvd(
+                profile_id=profile.id,
+                user_id=user.id,
+                key="email",
+                value=user.email,
+            ), session=session)
+    data = {
+        "id": user.id,
+    }
     access_token = create_token(
-        data=user.model_dump(),
+        data=data,
         secret=ACCESS_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = create_token(
-        data=user.model_dump(),
+        data=data,
         secret=REFRESH_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),

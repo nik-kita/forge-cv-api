@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, ForeignKey
+from sqlmodel import SQLModel, Field
 
 
 class Education_664929d99358(SQLModel):
@@ -11,8 +11,6 @@ class Education_664929d99358(SQLModel):
     details: str | None
     education: str | None
     university: str = Field(nullable=False)
-    user_id: int = Field(ForeignKey(
-        'users.id', ondelete='cascade'), nullable=False)
-    profile_id: int | None = Field(
-        ForeignKey('profiles.id', ondelete='set null'))
+    user_id: int = Field(foreign_key='users.id', nullable=False)
+    profile_id: int | None = Field(foreign_key='profiles.id')
     degree: str | None

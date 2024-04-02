@@ -13,11 +13,21 @@ def get_payload_from_token(
 
         return payload
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        try:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"""\
+Could not validate credentials! \
+Untrusted payload: {jwt.get_unverified_claims(token)}\
+    """,
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        except JWTError:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
 
 def create_token(
