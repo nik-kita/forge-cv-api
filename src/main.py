@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from sqlmodel import select
-
-from src.database.db import ActualSession
-from src.database.models.profile import Profile
-from src.database.models.user import UserRes, User
+from .config import DB_NAME, SQLALCHEMY_URL
+from database.db import ActualSession
+from database.models.profile import Profile
+from database.models.user import UserRes, User
 from .routers.auth import Me, router as auth_router
 from .routers.profile import router as profile_router
 from contextlib import asynccontextmanager
@@ -12,7 +12,9 @@ from os import system
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    system("alembic upgrade head")
+    if SQLALCHEMY_URL.startswith("sqlite"):
+        system(f"rm {DB_NAME}")
+        system("alembic upgrade head")
     yield
 
 

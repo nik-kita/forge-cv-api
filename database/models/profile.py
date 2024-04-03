@@ -1,9 +1,9 @@
 from sqlmodel import Relationship
-from src.database.models.avatar import Avatar
-from src.database.models.education import Education
-from src.database.models.experience import Experience
-from src.database.models.language import Language
-from src.database.models.skill import Skill
+from database.models.avatar import Avatar
+from database.models.education import Education
+from database.models.experience import Experience
+from database.models.language import Language
+from database.models.skill import Skill
 from .versions.profile_3157dda778eb import Profile_3157dda778eb
 from .contacts_kvd import ContactsKvd
 

@@ -19,12 +19,12 @@ from fastapi import HTTPException
 
 from pydantic import BaseModel
 from datetime import timedelta
-from src.database.models.contacts_kvd import create_contact, ContactsKvd
-from src.database.models.user import User, create_user, get_user_by_email, get_user_by_id
+from database.models.contacts_kvd import create_contact, ContactsKvd
+from database.models.user import User, create_user, get_user_by_email, get_user_by_id
 from src.services.user_profile_service import gen_default_profile
 from src.utils.jwt import get_payload_from_token, create_token
-from src.database.db import ActualSession
-from src.database.models.auth_provider import AuthProviderRaw as AuthProvider
+from database.db import ActualSession
+from database.models.auth_provider import AuthProviderRaw as AuthProvider
 
 router = APIRouter()
 

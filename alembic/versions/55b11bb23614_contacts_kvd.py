@@ -5,8 +5,8 @@ Revises: 3157dda778eb
 Create Date: 2024-04-02 03:34:45.720243
 
 """
-from src.database.db import engine
-from src.database.models.versions.contacts_kvd_55b11bb23614 import ContactsKvd_55b11bb23614
+from database.db import engine
+from database.models.versions.contacts_kvd_55b11bb23614 import ContactsKvd_55b11bb23614
 from typing import Sequence, Union
 
 from alembic import op

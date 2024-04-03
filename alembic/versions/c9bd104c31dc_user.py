@@ -5,8 +5,8 @@ Revises: 56768cdb72cc
 Create Date: 2024-04-02 00:53:46.892375
 
 """
-from src.database.models.versions.user_c9bd104c31dc import Userc9bd104c31dc
-from src.database.db import engine
+from database.models.versions.user_c9bd104c31dc import Userc9bd104c31dc
+from database.db import engine
 from sqlmodel import SQLModel
 from typing import Sequence, Union
 

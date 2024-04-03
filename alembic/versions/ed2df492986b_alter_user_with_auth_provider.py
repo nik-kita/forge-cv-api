@@ -5,8 +5,8 @@ Revises: 4451bbbfbdbd
 Create Date: 2024-04-02 01:45:32.162475
 
 """
-from src.database.models.versions.auth_provider_4451bbbfbdbd import AuthProvider4451bbbfbdbd
-from src.database.models.versions.user_ed2df492986b import Userced2df492986b
+from database.models.versions.auth_provider_4451bbbfbdbd import AuthProvider4451bbbfbdbd
+from database.models.versions.user_ed2df492986b import Userced2df492986b
 from typing import Sequence, Union
 
 from alembic import op

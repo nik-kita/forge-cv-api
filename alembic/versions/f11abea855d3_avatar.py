@@ -5,8 +5,8 @@ Revises: ed2df492986b
 Create Date: 2024-04-02 02:30:14.316685
 
 """
-from src.database.db import engine
-from src.database.models.versions.avatar_f11abea855d3 import Avatar_f11abea855d3
+from database.db import engine
+from database.models.versions.avatar_f11abea855d3 import Avatar_f11abea855d3
 from typing import Sequence, Union
 
 from alembic import op

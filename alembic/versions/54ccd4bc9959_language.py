@@ -10,8 +10,8 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-from src.database.models.versions.language_54ccd4bc9959 import Language_54ccd4bc9959
-from src.database.db import engine
+from database.models.versions.language_54ccd4bc9959 import Language_54ccd4bc9959
+from database.db import engine
 
 # revision identifiers, used by Alembic.
 revision: str = '54ccd4bc9959'

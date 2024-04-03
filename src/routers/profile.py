@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body
 from typing import Annotated
-from src.database.db import ActualSession
+from database.db import ActualSession
 from src.routers.auth import Me
 from src.services.user_profile_service import UpsertProfile, get_user_profile, upsert_profile
 

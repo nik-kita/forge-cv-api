@@ -9,8 +9,8 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from src.database.db import engine
-from src.database.models.versions.auth_provider_4451bbbfbdbd import AuthProvider4451bbbfbdbd
+from database.db import engine
+from database.models.versions.auth_provider_4451bbbfbdbd import AuthProvider4451bbbfbdbd
 from sqlmodel import SQLModel, Enum
 
 # revision identifiers, used by Alembic.

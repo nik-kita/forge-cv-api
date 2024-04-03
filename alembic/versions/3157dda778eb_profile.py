@@ -10,8 +10,8 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-from src.database.models.versions.profile_3157dda778eb import Profile_3157dda778eb
-from src.database.db import engine
+from database.models.versions.profile_3157dda778eb import Profile_3157dda778eb
+from database.db import engine
 from sqlmodel import UniqueConstraint
 
 # revision identifiers, used by Alembic.

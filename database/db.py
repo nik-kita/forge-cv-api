@@ -6,7 +6,11 @@ from src.config import SQLALCHEMY_URL
 
 engine = create_engine(
     SQLALCHEMY_URL,
-    echo=SQLALCHEMY_URL.startswith("sqlite"),
+    echo=True,
+    connect_args={
+        "check_same_thread": False,
+    } if SQLALCHEMY_URL.startswith("sqlite")
+    else None
 )
 
 
