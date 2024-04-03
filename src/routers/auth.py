@@ -19,10 +19,12 @@ from fastapi import HTTPException
 
 from pydantic import BaseModel
 from datetime import timedelta
-from src.database.user import User, get_user_by_id
+from src.database.models.contacts_kvd import create_contact, ContactsKvd
+from src.database.models.user import User, create_user, get_user_by_email, get_user_by_id
+from src.services.user_profile_service import gen_default_profile
 from src.utils.jwt import get_payload_from_token, create_token
-from src.database.db import ActualSession, LocalSession
-from src.database.user import create_user, get_user_by_email
+from src.database.db import ActualSession
+from src.database.models.auth_provider import AuthProviderRaw as AuthProvider
 
 router = APIRouter()
 
@@ -38,6 +40,7 @@ oauth2_schema = HTTPBearer(
 
 class SignIn(BaseModel):
     credential: str
+    auth_provider: AuthProvider
 
 
 class Refresh(BaseModel):
@@ -53,7 +56,6 @@ def get_me(
         secret=ACCESS_SECRET_KEY,
         algorithms=[ALGORITHM],
     )
-    print(payload)
     me = get_user_by_id(payload["id"], session)
     return me
 
@@ -74,18 +76,33 @@ def sign_in(
     except ValueError:
         raise HTTPException(401, "Invalid token")
 
-    user = get_user_by_email(data["email"], session) or create_user(
-        User(email=data["email"], sub=data["sub"]), session
-    )
+    user = get_user_by_email(data["email"], session)
 
+    if not user:
+        user = create_user(
+            User(email=data["email"], sub=data["sub"],
+                 auth=body.auth_provider), session
+        )
+        profile = gen_default_profile(user=user, session=session)
+
+        if user.email:
+            create_contact(contact=ContactsKvd(
+                profile_id=profile.id,
+                user_id=user.id,
+                key="email",
+                value=user.email,
+            ), session=session)
+    data = {
+        "id": user.id,
+    }
     access_token = create_token(
-        data=user.model_dump(),
+        data=data,
         secret=ACCESS_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = create_token(
-        data=user.model_dump(),
+        data=data,
         secret=REFRESH_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
@@ -99,25 +116,28 @@ def sign_in(
 
 
 @router.post("/refresh")
-def refresh(body: Refresh):
+def refresh(body: Refresh, session: ActualSession):
     payload = get_payload_from_token(
         token=body.refresh_token,
         secret=REFRESH_SECRET_KEY,
         algorithms=[ALGORITHM],
     )
-    user = get_user_by_id(payload["id"])
+    user = get_user_by_id(payload["id"], session=session)
 
     if user is None:
         raise HTTPException(401, "Invalid token")
 
+    data = {
+        "id": user.id,
+    }
     access_token = create_token(
-        data=user,
+        data=data,
         secret=ACCESS_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = create_token(
-        data=user,
+        data=data,
         secret=REFRESH_SECRET_KEY,
         algorithm=ALGORITHM,
         expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),

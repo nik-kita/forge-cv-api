@@ -1,0 +1,126 @@
+Project "cv-builder" {
+  database_type: 'PostgreSQL'
+}
+
+Enum auth_provider {
+  "google"
+}
+
+Table users as u {
+  email varchar [unique]
+  sub varchar [unique]
+  auth auth_provider [not null]
+  id integer [pk, increment, not null]
+}
+
+Ref: u.id < p.user_id [delete: cascade]
+Ref: u.id < template.user_id [delete: cascade]
+Ref: u.id < cv.user_id [delete: cascade]
+Ref: u.id < contacts_kvd.user_id [delete: cascade]
+Ref: u.id < skills.user_id [delete: cascade]
+Ref: u.id < experiences.user_id [delete: cascade]
+Ref: u.id < educations.user_id [delete: cascade]
+Ref: u.id < languages.user_id [delete: cascade]
+Ref: u.id < ava.user_id [delete: cascade]
+
+Table avatars as ava {
+  user_id integer [not null]
+  link varchar [not null]
+  name varchar
+  details varchar
+  id integer [pk, increment, not null]
+}
+
+Ref: ava.id < p.avatar_id [delete: set null]
+
+Table profiles as p {
+  user_id integer [not null]
+  avatar_id integer
+  name varchar [default: 'default']
+  indexes {
+    (user_id, name) [unique]
+  }
+  summary varchar
+  details varchar
+  id integer [pk, increment, not null]
+}
+
+Ref: p.id < cv.profile_id [delete: set null]
+Ref: p.id < contacts_kvd.profile_id [delete: set null]
+Ref: p.id < skills.profile_id [delete: set null]
+Ref: p.id < experiences.profile_id [delete: set null]
+Ref: p.id < educations.profile_id [delete: set null]
+Ref: p.id < languages.profile_id [delete: set null]
+
+
+Table contacts_kvd {
+  user_id integer [not null]
+  id integer [pk, increment, not null]
+  key varchar [not null]
+  value varchar [not null]
+  details varchar
+  profile_id integer
+}
+
+Table skills {
+  user_id integer [not null]
+  id integer [pk, increment, not null]
+  name varchar [not null]
+  details varchar
+  certificate varchar
+  indexes {
+    (profile_id, name) [unique]
+  }
+  profile_id integer
+}
+
+Table experiences {
+  user_id integer [not null]
+  id integer [pk, increment, not null]
+  from date
+  to date
+  duration varchar
+  company varchar [not null]
+  position varchar
+  details varchar
+  certificate varchar
+  reference_letter varchar
+  profile_id integer
+}
+
+Table educations {
+  user_id integer [not null]
+  id integer [pk, increment, not null]
+  from date
+  to date
+  diplom varchar
+  certificate varchar
+  details varchar
+  university varchar [not null]
+  education varchar
+  profile_id integer
+}
+
+Table languages {
+  user_id integer [not null]
+  id integer [pk, increment, not null]
+  language varchar [not null]
+  level varchar
+  certificate varchar
+  details varchar
+  profile_id integer
+}
+
+Table template {
+  id integer [pk, increment]
+  user_id integer
+}
+
+Ref: template.id < cv.template_id [delete: cascade]
+
+Table cv {
+  id integer
+  profile_id integer
+  template_id integer
+  user_id integer
+}

@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:app}/dev.db",
+            "name": "cv-builder/app/dev.db"
+        }
+    ]
+}
