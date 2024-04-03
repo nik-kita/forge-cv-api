@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 from database.models.versions.education_664929d99358 import Education_664929d99358
-from database.db import engine
+from database.core import _engine
 
 # revision identifiers, used by Alembic.
 revision: str = '664929d99358'
@@ -25,7 +25,7 @@ class Education(Education_664929d99358, table=True):
 
 
 def upgrade() -> None:
-    Education.metadata.create_all(engine)
+    Education.metadata.create_all(_engine)
 
 
 def downgrade() -> None:

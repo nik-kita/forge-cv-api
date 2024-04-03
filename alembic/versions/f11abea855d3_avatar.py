@@ -5,7 +5,7 @@ Revises: ed2df492986b
 Create Date: 2024-04-02 02:30:14.316685
 
 """
-from database.db import engine
+from database.core import _engine
 from database.models.versions.avatar_f11abea855d3 import Avatar_f11abea855d3
 from typing import Sequence, Union
 
@@ -25,7 +25,7 @@ class Avatar(Avatar_f11abea855d3, table=True):
 
 
 def upgrade() -> None:
-    Avatar.metadata.create_all(engine)
+    Avatar.metadata.create_all(_engine)
 
 
 def downgrade() -> None:

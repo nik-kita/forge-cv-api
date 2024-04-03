@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 from database.models.versions.profile_3157dda778eb import Profile_3157dda778eb
-from database.db import engine
+from database.core import _engine
 from sqlmodel import UniqueConstraint
 
 # revision identifiers, used by Alembic.
@@ -29,7 +29,7 @@ UniqueConstraint(Profile.user_id, Profile.name)
 
 
 def upgrade() -> None:
-    Profile.metadata.create_all(engine)
+    Profile.metadata.create_all(_engine)
 
 
 def downgrade() -> None:

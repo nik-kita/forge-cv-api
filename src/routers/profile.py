@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body
 from typing import Annotated
-from database.db import ActualSession
+from database.core import Db
 from src.routers.auth import Me
 from src.services.user_profile_service import UpsertProfile, get_user_profile, upsert_profile
 
@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.get('/{name}')
-def get_profile_by_name(name: str, me: Me, session: ActualSession):
+def get_profile_by_name(name: str, me: Me, session: Db):
     res = get_user_profile(user_id=me.id, profile_name=name, session=session)
 
     return res
@@ -18,7 +18,7 @@ def get_profile_by_name(name: str, me: Me, session: ActualSession):
 def upsert_profile_by_name(
     name: str,
     me: Me,
-    session: ActualSession,
+    session: Db,
     data: UpsertProfile,
 ):
     res = upsert_profile(

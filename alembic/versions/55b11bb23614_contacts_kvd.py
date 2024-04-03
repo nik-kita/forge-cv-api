@@ -5,7 +5,7 @@ Revises: 3157dda778eb
 Create Date: 2024-04-02 03:34:45.720243
 
 """
-from database.db import engine
+from database.core import _engine
 from database.models.versions.contacts_kvd_55b11bb23614 import ContactsKvd_55b11bb23614
 from typing import Sequence, Union
 
@@ -23,7 +23,7 @@ class ContactsKvd(ContactsKvd_55b11bb23614, table=True):
     __tablename__ = "contacts_kvd"
 
 def upgrade() -> None:
-    ContactsKvd.metadata.create_all(engine)
+    ContactsKvd.metadata.create_all(_engine)
 
 
 def downgrade() -> None:

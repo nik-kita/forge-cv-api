@@ -6,7 +6,7 @@ Create Date: 2024-04-02 00:53:46.892375
 
 """
 from database.models.versions.user_c9bd104c31dc import Userc9bd104c31dc
-from database.db import engine
+from database.core import _engine
 from sqlmodel import SQLModel
 from typing import Sequence, Union
 
@@ -26,7 +26,7 @@ class User(Userc9bd104c31dc, table=True):
 
 
 def upgrade() -> None:
-    User.metadata.create_all(engine)
+    User.metadata.create_all(_engine)
 
 
 def downgrade() -> None:

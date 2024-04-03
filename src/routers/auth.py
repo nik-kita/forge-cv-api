@@ -23,7 +23,7 @@ from database.models.contacts_kvd import create_contact, ContactsKvd
 from database.models.user import User, create_user, get_user_by_email, get_user_by_id
 from src.services.user_profile_service import gen_default_profile
 from src.utils.jwt import get_payload_from_token, create_token
-from database.db import ActualSession
+from database.core import Db
 from database.models.auth_provider import AuthProviderRaw as AuthProvider
 
 router = APIRouter()
@@ -49,7 +49,7 @@ class Refresh(BaseModel):
 
 def get_me(
     auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(oauth2_schema)],
-    session: ActualSession,
+    session: Db,
 ):
     payload = get_payload_from_token(
         token=auth_credentials.credentials,
@@ -66,7 +66,7 @@ Me = Annotated[User, Depends(get_me)]
 @router.post("/sign-in")
 def sign_in(
     body: SignIn,
-    session: ActualSession,
+    session: Db,
 ):
     data = None
     try:
@@ -116,7 +116,7 @@ def sign_in(
 
 
 @router.post("/refresh")
-def refresh(body: Refresh, session: ActualSession):
+def refresh(body: Refresh, session: Db):
     payload = get_payload_from_token(
         token=body.refresh_token,
         secret=REFRESH_SECRET_KEY,

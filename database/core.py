@@ -4,7 +4,7 @@ from fastapi import Depends
 from src.config import SQLALCHEMY_URL
 
 
-engine = create_engine(
+_engine = create_engine(
     SQLALCHEMY_URL,
     echo=True,
     connect_args={
@@ -14,9 +14,9 @@ engine = create_engine(
 )
 
 
-def get_session():
-    with Session(engine) as session:
+def _get_session():
+    with Session(_engine) as session:
         yield session
 
 
-ActualSession = Annotated[Session, Depends(get_session)]
+Db = Annotated[Session, Depends(_get_session)]

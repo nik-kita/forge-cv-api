@@ -9,7 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from database.db import engine
+from database.core import _engine
 from database.models.versions.auth_provider_4451bbbfbdbd import AuthProvider4451bbbfbdbd
 from sqlmodel import SQLModel, Enum
 
@@ -21,8 +21,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    Enum(AuthProvider4451bbbfbdbd, name=AuthProvider4451bbbfbdbd.__name__).create(engine)
+    Enum(AuthProvider4451bbbfbdbd, name=AuthProvider4451bbbfbdbd.__name__).create(_engine)
 
 
 def downgrade() -> None:
-    sa.Enum(AuthProvider4451bbbfbdbd.__name__).drop(engine)
+    sa.Enum(AuthProvider4451bbbfbdbd.__name__).drop(_engine)

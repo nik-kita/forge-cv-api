@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from database.db import ActualSession
+from database.core import Db
 from database.models.avatar import Avatar
 from database.models.contacts_kvd import ContactsKvd, ContactsKvd, ContactsKvdRes
 from database.models.education import Education

@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 from database.models.versions.language_54ccd4bc9959 import Language_54ccd4bc9959
-from database.db import engine
+from database.core import _engine
 
 # revision identifiers, used by Alembic.
 revision: str = '54ccd4bc9959'
@@ -25,7 +25,7 @@ class Language(Language_54ccd4bc9959, table=True):
 
 
 def upgrade() -> None:
-    Language.metadata.create_all(engine)
+    Language.metadata.create_all(_engine)
 
 
 def downgrade() -> None:

@@ -5,7 +5,7 @@ Revises: 55b11bb23614
 Create Date: 2024-04-02 03:45:08.210918
 
 """
-from database.db import engine
+from database.core import _engine
 from database.models.versions.skill_c5b2e6ef6c14 import Skill_c5b2e6ef6c14
 from typing import Sequence, Union
 
@@ -25,7 +25,7 @@ class Skill(Skill_c5b2e6ef6c14, table=True):
 
 
 def upgrade() -> None:
-    Skill.metadata.create_all(engine)
+    Skill.metadata.create_all(_engine)
 
 
 def downgrade() -> None:

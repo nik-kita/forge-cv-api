@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 from database.models.versions.experience_d41cd8f56f34 import Experience_d41cd8f56f34
-from database.db import engine
+from database.core import _engine
 
 # revision identifiers, used by Alembic.
 revision: str = 'd41cd8f56f34'
@@ -25,7 +25,7 @@ class Experience(Experience_d41cd8f56f34, table=True):
 
 
 def upgrade() -> None:
-    Experience.metadata.create_all(engine)
+    Experience.metadata.create_all(_engine)
 
 
 def downgrade() -> None:
