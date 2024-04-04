@@ -1,7 +1,7 @@
 from models import (
     auth_provider_enum,
     avatar_model,
-    contacts_model,
+    contact_model,
     education_model,
     experience_model,
     language_model,
@@ -20,7 +20,7 @@ from os import getenv
 (
     auth_provider_enum,
     avatar_model,
-    contacts_model,
+    contact_model,
     education_model,
     experience_model,
     language_model,

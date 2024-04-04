@@ -7,10 +7,10 @@ from common.config import (
     ALGORITHM,
 )
 from fastapi import HTTPException
-from models.contacts_model import create_contact, ContactsKvd
+from models.contact_model import Contact
 from models.user_model import User
 from schemas.auth_schema import Refresh, SignIn
-from src.services import auth_service, user_service, profile_service
+from src.services import auth_service, user_service, profile_service, contact_service
 from utils import jwt_util
 from common.db import Db
 
@@ -40,7 +40,7 @@ def sign_in(
         profile = profile_service.gen_default(user=user, session=session)
 
         if user.email:
-            create_contact(contact=ContactsKvd(
+            contact_service.create(contact=Contact(
                 profile_id=profile.id,
                 user_id=user.id,
                 key="email",

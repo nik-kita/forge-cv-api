@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class AddAvatarReq(BaseModel):
+class AvatarReq(BaseModel):
     user_id: int
     link: str
     name: str | None = None

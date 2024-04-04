@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from models.avatar_model import Avatar
-from models.contacts_model import ContactsKvd
+from models.contact_model import Contact
 from models.education_model import Education
 from models.experience_model import Experience
 from models.language_model import Language
@@ -13,7 +13,7 @@ class ProfileReq(BaseModel):
     name: str
     summary: str | None = None
     details: str | None = None
-    contacts: list[ContactsKvd] | None = None
+    contacts: list[Contact] | None = None
     skills: list[Skill] | None = None
     education: list[Education] | None = None
     experience: list[Experience] | None = None
@@ -27,7 +27,7 @@ class ProfileRes(BaseModel):
     name: str
     summary: str | None = None
     details: str | None = None
-    contacts: list[ContactsKvd] = []
+    contacts: list[Contact] = []
     skills: list[Skill] = []
     education: list[Education] = []
     experience: list[Experience] = []
