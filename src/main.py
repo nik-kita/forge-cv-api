@@ -13,6 +13,7 @@ from common.auth import Me_and_Session
 async def lifespan(app: FastAPI):
     if SQLALCHEMY_URL.startswith("sqlite"):
         system(f"rm {DB_NAME}")
+        system('rm -fr migrations/__pycache__ && mkdir migrations/versions')
         system("alembic upgrade head")
     yield
 
