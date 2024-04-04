@@ -26,8 +26,8 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(profile_router, prefix="/profile", tags=["profile"])
 
 
-@app.get("/me", response_model=UserRes | None)
-async def get_me(me_and_session: Me_and_Session):
+@app.get("/me")
+async def get_me(me_and_session: Me_and_Session) -> UserRes:
     me, _ = me_and_session
 
     return me

@@ -42,4 +42,4 @@ def _get_me(
     return me, session
 
 
-Me_and_Session = Annotated[tuple[User | None, Db], Depends(_get_me)]
+Me_and_Session = Annotated[tuple[User, Db], Depends(_get_me)]
