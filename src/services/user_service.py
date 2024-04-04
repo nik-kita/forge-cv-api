@@ -1,4 +1,4 @@
-from models.user import User
+from models.user_model import User
 from sqlmodel import Session, select
 
 

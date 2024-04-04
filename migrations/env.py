@@ -1,13 +1,13 @@
 from models import (
-    auth_provider,
-    avatar,
-    contacts_kvd,
-    education,
-    experience,
-    language,
-    profile,
-    skill,
-    user,
+    auth_provider_enum,
+    avatar_model,
+    contacts_model,
+    education_model,
+    experience_model,
+    language_model,
+    profile_model,
+    skill_model,
+    user_model,
 )
 from sqlmodel import SQLModel
 from logging.config import fileConfig
@@ -18,15 +18,15 @@ from alembic import context
 from os import getenv
 
 (
-    auth_provider,
-    avatar,
-    contacts_kvd,
-    education,
-    experience,
-    language,
-    profile,
-    skill,
-    user,
+    auth_provider_enum,
+    avatar_model,
+    contacts_model,
+    education_model,
+    experience_model,
+    language_model,
+    profile_model,
+    skill_model,
+    user_model,
 )
 
 load_dotenv()

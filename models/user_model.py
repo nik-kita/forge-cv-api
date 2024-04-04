@@ -1,8 +1,8 @@
 from sqlmodel import Relationship
 from sqlalchemy import orm
 
-from .profile import Profile
-from .auth_provider import AuthProvider, AuthProviderEnum
+from .profile_model import Profile
+from .auth_provider_enum import AuthProvider, AuthProviderEnum
 from sqlmodel import Field, SQLModel
 
 

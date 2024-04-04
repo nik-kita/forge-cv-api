@@ -9,7 +9,7 @@ from common.config import (
     ACCESS_SECRET_KEY,
     ALGORITHM,
 )
-from models.user import User
+from models.user_model import User
 from utils import jwt_util
 from common.db import Db
 from src.services import user_service

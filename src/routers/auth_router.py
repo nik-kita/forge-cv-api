@@ -7,8 +7,8 @@ from common.config import (
     ALGORITHM,
 )
 from fastapi import HTTPException
-from models.contacts_kvd import create_contact, ContactsKvd
-from models.user import User
+from models.contacts_model import create_contact, ContactsKvd
+from models.user_model import User
 from schemas.auth import Refresh, SignIn
 from src.services import auth_service, user_service, profile_service
 from utils import jwt_util

@@ -1,10 +1,10 @@
 from sqlmodel import Relationship
-from models.avatar import Avatar
-from models.education import Education
-from models.experience import Experience
-from models.language import Language
-from models.skill import Skill
-from .contacts_kvd import ContactsKvd
+from models.avatar_model import Avatar
+from models.education_model import Education
+from models.experience_model import Experience
+from models.language_model import Language
+from models.skill_model import Skill
+from .contacts_model import ContactsKvd
 
 
 from sqlmodel import SQLModel, Field

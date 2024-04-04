@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 
-from models.avatar import Avatar
-from models.contacts_kvd import ContactsKvd
-from models.education import Education
-from models.experience import Experience
-from models.language import Language
-from models.skill import Skill
+from models.avatar_model import Avatar
+from models.contacts_model import ContactsKvd
+from models.education_model import Education
+from models.experience_model import Experience
+from models.language_model import Language
+from models.skill_model import Skill
 
 
 class ProfileReq(BaseModel):
