@@ -16,7 +16,7 @@ Table users as u {
 Ref: u.id < p.user_id [delete: cascade]
 Ref: u.id < template.user_id [delete: cascade]
 Ref: u.id < cv.user_id [delete: cascade]
-Ref: u.id < contacts_kvd.user_id [delete: cascade]
+Ref: u.id < contacts.user_id [delete: cascade]
 Ref: u.id < skills.user_id [delete: cascade]
 Ref: u.id < experiences.user_id [delete: cascade]
 Ref: u.id < educations.user_id [delete: cascade]
@@ -46,14 +46,14 @@ Table profiles as p {
 }
 
 Ref: p.id < cv.profile_id [delete: set null]
-Ref: p.id < contacts_kvd.profile_id [delete: set null]
+Ref: p.id < contacts.profile_id [delete: set null]
 Ref: p.id < skills.profile_id [delete: set null]
 Ref: p.id < experiences.profile_id [delete: set null]
 Ref: p.id < educations.profile_id [delete: set null]
 Ref: p.id < languages.profile_id [delete: set null]
 
 
-Table contacts_kvd {
+Table contacts {
   user_id integer [not null]
   id integer [pk, increment, not null]
   key varchar [not null]
