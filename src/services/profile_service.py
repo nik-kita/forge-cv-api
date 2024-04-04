@@ -1,7 +1,7 @@
 from models.profile import Profile
 from sqlmodel import Session, select
 from models.user import User
-from schemas.profile import UpsertProfile
+from schemas.profile import ProfileReq
 
 
 def gen_default(user: User, session: Session):
@@ -26,7 +26,7 @@ def get(*, user_id: int, profile_name: str, session: Session):
 def upsert(
     *,
     user_id: int,
-    data: UpsertProfile,
+    data: ProfileReq,
     session: Session,
 ):
     profile = get(

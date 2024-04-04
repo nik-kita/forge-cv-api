@@ -9,9 +9,10 @@ from common.config import (
     ACCESS_SECRET_KEY,
     ALGORITHM,
 )
-from models.user import User, get_user_by_id
-from utils.jwt import get_payload_from_token
+from models.user import User
+from utils import jwt_util
 from common.db import Db
+from src.services import user_service
 
 
 _oauth2_schema = HTTPBearer(
@@ -28,12 +29,12 @@ def _get_me(
     auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(_oauth2_schema)],
     session: Db,
 ):
-    payload = get_payload_from_token(
+    payload = jwt_util.get_payload_from_token(
         token=auth_credentials.credentials,
         secret=ACCESS_SECRET_KEY,
         algorithms=[ALGORITHM],
     )
-    me = get_user_by_id(payload["id"], session)
+    me = user_service.get_by_id(payload["id"], session)
 
     if not me:
         raise HTTPException(status_code=401, detail="User not found")

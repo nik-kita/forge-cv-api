@@ -1,6 +1,6 @@
 from datetime import timedelta
 from common.config import ACCESS_SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, REFRESH_SECRET_KEY, REFRESH_TOKEN_EXPIRE_DAYS
-from utils.jwt import create_token
+from utils import jwt_util
 import enum
 
 
@@ -20,13 +20,13 @@ def gen_jwt_res(user_id: int, jwt_type: JwtTypeEnum):
         REFRESH_SECRET_KEY,
         REFRESH_TOKEN_EXPIRE_DAYS,
     )
-    access_token = create_token(
+    access_token = jwt_util.create_token(
         data=data,
         secret=secret,
         algorithm=ALGORITHM,
         expires_delta=timedelta(minutes=expires_delta),
     )
-    refresh_token = create_token(
+    refresh_token = jwt_util.create_token(
         data=data,
         secret=secret,
         algorithm=ALGORITHM,

@@ -10,20 +10,17 @@ from .contacts_kvd import ContactsKvd
 from sqlmodel import SQLModel, Field
 
 
-class BaseProfile(SQLModel):
-    summary: str | None
-    name: str | None = Field(default='default')
-    details: str | None
+class Profile(SQLModel, table=True):
+    __tablename__ = "profiles"
 
-
-class FullProfile(BaseProfile):
+    id: int | None = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key='users.id', nullable=False)
     avatar_id: int | None = Field(foreign_key='avatars.id')
-    id: int | None = Field(default=None, primary_key=True)
 
+    name: str | None = Field(default='default')
+    summary: str | None
+    details: str | None
 
-class Profile(FullProfile, table=True):
-    __tablename__ = "profiles"
     contacts: list[ContactsKvd] = Relationship()
     skills: list[Skill] = Relationship()
     education: list[Education] = Relationship()

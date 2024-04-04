@@ -8,17 +8,16 @@ from common.config import (
 )
 from fastapi import HTTPException
 from models.contacts_kvd import create_contact, ContactsKvd
-from models.user import User, create_user, get_user_by_email, get_user_by_id
+from models.user import User
 from schemas.auth import Refresh, SignIn
-from src.services.auth import JwtTypeEnum, gen_jwt_res
-from src.services.profile import gen_default
-from utils.jwt import get_payload_from_token
+from src.services import auth_service, user_service, profile_service
+from utils import jwt_util
 from common.db import Db
 
-router = APIRouter()
+auth_router = APIRouter()
 
 
-@router.post("/sign-in")
+@auth_router.post("/sign-in")
 def sign_in(
     body: SignIn,
     session: Db,
@@ -31,14 +30,14 @@ def sign_in(
     except ValueError:
         raise HTTPException(401, "Invalid token")
 
-    user = get_user_by_email(data["email"], session)
+    user = user.get_by_email(data["email"], session)
 
     if not user:
-        user = create_user(
+        user = user_service.create(
             User(email=data["email"], sub=data["sub"],
                  auth=body.auth_provider), session
         )
-        profile = gen_default(user=user, session=session)
+        profile = profile_service.gen_default(user=user, session=session)
 
         if user.email:
             create_contact(contact=ContactsKvd(
@@ -48,23 +47,25 @@ def sign_in(
                 value=user.email,
             ), session=session)
 
-    res = gen_jwt_res(user_id=user.id, jwt_type=JwtTypeEnum.ACCESS)
+    res = auth_service.gen_jwt_res(
+        user_id=user.id, jwt_type=auth_service.JwtTypeEnum.ACCESS)
 
     return res
 
 
-@router.post("/refresh")
+@auth_router.post("/refresh")
 def refresh(body: Refresh, session: Db):
-    payload = get_payload_from_token(
+    payload = jwt_util.get_payload_from_token(
         token=body.refresh_token,
         secret=REFRESH_SECRET_KEY,
         algorithms=[ALGORITHM],
     )
-    user = get_user_by_id(payload["id"], session=session)
+    user = user_service.get_by_id(payload["id"], session=session)
 
     if user is None:
         raise HTTPException(401, "Invalid token")
 
-    res = gen_jwt_res(user_id=user.id, jwt_type=JwtTypeEnum.REFRESH)
+    res = auth_service.gen_jwt_res(
+        user_id=user.id, jwt_type=auth_service.JwtTypeEnum.REFRESH)
 
     return res

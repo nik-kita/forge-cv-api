@@ -5,12 +5,14 @@ from models.contacts_kvd import ContactsKvd
 from models.education import Education
 from models.experience import Experience
 from models.language import Language
-from models.profile import BaseProfile, FullProfile
 from models.skill import Skill
 
 
-class UpsertProfile(BaseModel):
+class ProfileReq(BaseModel):
+    user_id: int
     name: str
+    summary: str | None = None
+    details: str | None = None
     contacts: list[ContactsKvd] | None = None
     skills: list[Skill] | None = None
     education: list[Education] | None = None
@@ -19,7 +21,12 @@ class UpsertProfile(BaseModel):
     avatar: Avatar | None = None
 
 
-class UpsertProfileRes(FullProfile):
+class ProfileRes(BaseModel):
+    id: int
+    user_id: int
+    name: str
+    summary: str | None = None
+    details: str | None = None
     contacts: list[ContactsKvd] = []
     skills: list[Skill] = []
     education: list[Education] = []
