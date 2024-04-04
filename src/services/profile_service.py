@@ -30,42 +30,35 @@ def upsert(
     session: Session,
 ):
     profile = get(
-        user_id=user_id, profile_name=data.name, session=session)
+        user_id=user_id, profile_name=data.name, session=session
+    ) or Profile(
+        user_id=user_id,
+        name=data.name,
+    )
 
-    if not profile:
-        profile = Profile(
-            user_id=user_id,
-            name=data.name,
-        )
+    profile.contacts = [
+        c.pre_insert(user_id=user_id) for c in data.contacts
+    ] if data.contacts else []
 
-    if data.contacts:
-        for c in data.contacts:
-            c.user_id = user_id
-        profile.contacts = data.contacts
+    profile.education = [
+        ed.pre_insert(user_id=user_id) for ed in data.education
+    ] if data.education else []
 
-    if data.education:
-        for ed in data.education:
-            ed.user_id = user_id
-        profile.education = data.education
+    profile.experience = [
+        exp.pre_insert(user_id=user_id) for exp in data.experience
+    ] if data.experience else []
 
-    if data.experience:
-        for exp in data.experience:
-            exp.user_id = user_id
-        profile.experience = data.experience
+    profile.languages = [
+        l.pre_insert(user_id=user_id) for l in data.languages
+    ] if data.languages else []
 
-    if data.languages:
-        for l in data.languages:
-            l.user_id = user_id
-        profile.languages = data.languages
+    profile.skills = [
+        s.pre_insert(user_id=user_id) for s in data.skills
+    ] if data.skills else []
 
-    if data.skills:
-        for s in data.skills:
-            s.user_id = user_id
-        profile.skills = data.skills
-
-    if data.avatar:
-        data.avatar.user_id = user_id
-        profile.avatar = data.avatar
+    profile.avatar = data.avatar.pre_insert(
+        user_id=user_id
+    ) if data.avatar else None
 
     session.add(profile)
     session.commit()
