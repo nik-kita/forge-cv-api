@@ -4,4 +4,5 @@ pip install \
     uvicorn \
     jose \
     python-dotenv \
-    google-auth
+    google-auth \
+    requests
