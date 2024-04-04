@@ -1,13 +1,7 @@
-from pydantic import BaseModel
-from models.avatar import Avatar
-from models.contacts_kvd import ContactsKvd, ContactsKvd
-from models.education import Education
-from models.experience import Experience
-from models.language import Language
 from models.profile import Profile
 from sqlmodel import Session, select
-from models.skill import Skill
 from models.user import User
+from schemas.profile import UpsertProfile
 
 
 def gen_default_profile(user: User, session: Session):
@@ -27,15 +21,6 @@ def get_user_profile(*, user_id: int, profile_name: str, session: Session):
     profile = session.exec(sql_query).first()
 
     return profile
-
-
-class UpsertProfile(BaseModel):
-    contacts: list[ContactsKvd] | None = None
-    skills: list[Skill] | None = None
-    education: list[Education] | None = None
-    experience: list[Experience] | None = None
-    languages: list[Language] | None = None
-    avatar: Avatar | None = None
 
 
 def upsert_profile(
