@@ -1,7 +1,7 @@
 from sqlmodel import create_engine, SQLModel, Session
 from typing import Annotated
 from fastapi import Depends
-from src.config import SQLALCHEMY_URL
+from common.config import SQLALCHEMY_URL
 
 
 _engine = create_engine(

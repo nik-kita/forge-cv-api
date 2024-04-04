@@ -1,14 +1,8 @@
-from typing import Annotated
-from fastapi import APIRouter, Depends
-from fastapi.security import (
-    HTTPAuthorizationCredentials,
-    HTTPBearer,
-)
+from fastapi import APIRouter
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from src.config import (
+from common.config import (
     GOOGLE_CLIENT_ID,
-    SWAGGER_HELPER_URL,
     ACCESS_SECRET_KEY,
     REFRESH_SECRET_KEY,
     ALGORITHM,
@@ -22,20 +16,11 @@ from datetime import timedelta
 from models.contacts_kvd import create_contact, ContactsKvd
 from models.user import User, create_user, get_user_by_email, get_user_by_id
 from src.services.user_profile_service import gen_default_profile
-from src.utils.jwt import get_payload_from_token, create_token
+from utils.jwt import get_payload_from_token, create_token
 from common.db import Db
 from models.auth_provider import AuthProviderEnum
 
 router = APIRouter()
-
-oauth2_schema = HTTPBearer(
-    description=f"""
-#### How to get access token
-1. [Sign in with Google]({SWAGGER_HELPER_URL})
-2. Token from step 1 should be used in `/sign-in` endpoint
-3. Access token from `/sign-in` insert into input below
-""",
-)
 
 
 class SignIn(BaseModel):
@@ -45,22 +30,6 @@ class SignIn(BaseModel):
 
 class Refresh(BaseModel):
     refresh_token: str
-
-
-def get_me(
-    auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(oauth2_schema)],
-    session: Db,
-):
-    payload = get_payload_from_token(
-        token=auth_credentials.credentials,
-        secret=ACCESS_SECRET_KEY,
-        algorithms=[ALGORITHM],
-    )
-    me = get_user_by_id(payload["id"], session)
-    return me
-
-
-Me = Annotated[User, Depends(get_me)]
 
 
 @router.post("/sign-in")
