@@ -3,34 +3,19 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from common.config import (
     GOOGLE_CLIENT_ID,
-    ACCESS_SECRET_KEY,
     REFRESH_SECRET_KEY,
     ALGORITHM,
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    REFRESH_TOKEN_EXPIRE_DAYS,
 )
 from fastapi import HTTPException
-
-from pydantic import BaseModel
-from datetime import timedelta
 from models.contacts_kvd import create_contact, ContactsKvd
 from models.user import User, create_user, get_user_by_email, get_user_by_id
+from schemas.auth import Refresh, SignIn
 from src.services.auth_service import JwtTypeEnum, gen_jwt_res
 from src.services.user_profile_service import gen_default_profile
-from utils.jwt import get_payload_from_token, create_token
+from utils.jwt import get_payload_from_token
 from common.db import Db
-from models.auth_provider import AuthProviderEnum
 
 router = APIRouter()
-
-
-class SignIn(BaseModel):
-    credential: str
-    auth_provider: AuthProviderEnum
-
-
-class Refresh(BaseModel):
-    refresh_token: str
 
 
 @router.post("/sign-in")
