@@ -5,4 +5,5 @@ pip install \
     python-jose \
     python-dotenv \
     google-auth \
-    requests
+    requests \
+    alembic
