@@ -1,14 +1,8 @@
-from typing import Annotated
-from fastapi import APIRouter, Depends
-from fastapi.security import (
-    HTTPAuthorizationCredentials,
-    HTTPBearer,
-)
+from fastapi import APIRouter
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from src.config import (
+from common.config import (
     GOOGLE_CLIENT_ID,
-    SWAGGER_HELPER_URL,
     ACCESS_SECRET_KEY,
     REFRESH_SECRET_KEY,
     ALGORITHM,
@@ -19,54 +13,30 @@ from fastapi import HTTPException
 
 from pydantic import BaseModel
 from datetime import timedelta
-from src.database.models.contacts_kvd import create_contact, ContactsKvd
-from src.database.models.user import User, create_user, get_user_by_email, get_user_by_id
+from models.contacts_kvd import create_contact, ContactsKvd
+from models.user import User, create_user, get_user_by_email, get_user_by_id
+from src.services.auth_service import JwtTypeEnum, gen_jwt_res
 from src.services.user_profile_service import gen_default_profile
-from src.utils.jwt import get_payload_from_token, create_token
-from src.database.db import ActualSession
-from src.database.models.auth_provider import AuthProviderRaw as AuthProvider
+from utils.jwt import get_payload_from_token, create_token
+from common.db import Db
+from models.auth_provider import AuthProviderEnum
 
 router = APIRouter()
-
-oauth2_schema = HTTPBearer(
-    description=f"""
-#### How to get access token
-1. [Sign in with Google]({SWAGGER_HELPER_URL})
-2. Token from step 1 should be used in `/sign-in` endpoint
-3. Access token from `/sign-in` insert into input below
-""",
-)
 
 
 class SignIn(BaseModel):
     credential: str
-    auth_provider: AuthProvider
+    auth_provider: AuthProviderEnum
 
 
 class Refresh(BaseModel):
     refresh_token: str
 
 
-def get_me(
-    auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(oauth2_schema)],
-    session: ActualSession,
-):
-    payload = get_payload_from_token(
-        token=auth_credentials.credentials,
-        secret=ACCESS_SECRET_KEY,
-        algorithms=[ALGORITHM],
-    )
-    me = get_user_by_id(payload["id"], session)
-    return me
-
-
-Me = Annotated[User, Depends(get_me)]
-
-
 @router.post("/sign-in")
 def sign_in(
     body: SignIn,
-    session: ActualSession,
+    session: Db,
 ):
     data = None
     try:
@@ -92,31 +62,14 @@ def sign_in(
                 key="email",
                 value=user.email,
             ), session=session)
-    data = {
-        "id": user.id,
-    }
-    access_token = create_token(
-        data=data,
-        secret=ACCESS_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
-    refresh_token = create_token(
-        data=data,
-        secret=REFRESH_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
-    )
 
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+    res = gen_jwt_res(user_id=user.id, jwt_type=JwtTypeEnum.ACCESS)
+
+    return res
 
 
 @router.post("/refresh")
-def refresh(body: Refresh, session: ActualSession):
+def refresh(body: Refresh, session: Db):
     payload = get_payload_from_token(
         token=body.refresh_token,
         secret=REFRESH_SECRET_KEY,
@@ -127,24 +80,6 @@ def refresh(body: Refresh, session: ActualSession):
     if user is None:
         raise HTTPException(401, "Invalid token")
 
-    data = {
-        "id": user.id,
-    }
-    access_token = create_token(
-        data=data,
-        secret=ACCESS_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
-    refresh_token = create_token(
-        data=data,
-        secret=REFRESH_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
-    )
+    res = gen_jwt_res(user_id=user.id, jwt_type=JwtTypeEnum.REFRESH)
 
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+    return res

@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, Field
 
 
-class Experience_d41cd8f56f34(SQLModel):
+class BaseExperience(SQLModel):
     __tablename__ = 'experiences'
     id: int | None = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key='users.id', nullable=False)
@@ -14,3 +14,7 @@ class Experience_d41cd8f56f34(SQLModel):
     position: str | None
     certificate: str | None
     reference_letter: str | None
+
+
+class Experience(BaseExperience, table=True):
+    __tablename__ = "experiences"

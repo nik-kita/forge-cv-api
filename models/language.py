@@ -1,16 +1,16 @@
 from sqlmodel import SQLModel, Field
 
 
-class Education_664929d99358(SQLModel):
-    __tablename__ = 'educations'
+class BaseLanguage(SQLModel):
+    __tablename__ = 'languages'
     id: int | None = Field(default=None, primary_key=True)
-    from_date: str | None
-    to_date: str | None
-    diploma: str | None
+    language: str = Field(nullable=False)
+    level: str | None
     certificate: str | None
     details: str | None
-    education: str | None
-    university: str = Field(nullable=False)
     user_id: int = Field(foreign_key='users.id', nullable=False)
     profile_id: int | None = Field(foreign_key='profiles.id')
-    degree: str | None
+
+
+class Language(BaseLanguage, table=True):
+    __tablename__ = "languages"

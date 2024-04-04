@@ -1,3 +1,15 @@
+from models import (
+    auth_provider,
+    avatar,
+    contacts_kvd,
+    education,
+    experience,
+    language,
+    profile,
+    skill,
+    user,
+)
+from sqlmodel import SQLModel
 from logging.config import fileConfig
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config
@@ -5,13 +17,25 @@ from sqlalchemy import pool
 from alembic import context
 from os import getenv
 
+(
+    auth_provider,
+    avatar,
+    contacts_kvd,
+    education,
+    experience,
+    language,
+    profile,
+    skill,
+    user,
+)
 
 load_dotenv()
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 section = config.config_ini_section
-config.set_section_option(section, 'SQLALCHEMY_URL', f"{getenv('SQLALCHEMY_URL')}{getenv('DB_NAME')}")
+config.set_section_option(section, 'SQLALCHEMY_URL',
+                          f"{getenv('SQLALCHEMY_URL')}{getenv('DB_NAME')}")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -20,9 +44,8 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = SQLModel.metadata
+# target_metadata = None
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

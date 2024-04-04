@@ -1,14 +1,23 @@
 from sqlmodel import Relationship
-from src.database.models.avatar import Avatar
-from src.database.models.education import Education
-from src.database.models.experience import Experience
-from src.database.models.language import Language
-from src.database.models.skill import Skill
-from .versions.profile_3157dda778eb import Profile_3157dda778eb
+from models.avatar import Avatar
+from models.education import Education
+from models.experience import Experience
+from models.language import Language
+from models.skill import Skill
 from .contacts_kvd import ContactsKvd
 
 
-BaseProfile = Profile_3157dda778eb
+from sqlmodel import SQLModel, Field
+
+
+class BaseProfile(SQLModel):
+    __tablename__ = "profiles"
+    user_id: int = Field(foreign_key='users.id', nullable=False)
+    avatar_id: int | None = Field(foreign_key='avatars.id')
+    summary: str | None
+    name: str | None = Field(default='default')
+    details: str | None
+    id: int | None = Field(default=None, primary_key=True)
 
 
 class Profile(BaseProfile, table=True):
