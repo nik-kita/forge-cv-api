@@ -4,12 +4,10 @@ from pydantic import BaseModel
 class AvatarReq(BaseModel):
     user_id: int
     link: str
+
     name: str | None = None
     details: str | None = None
 
-class AvatarRes(BaseModel):
+
+class AvatarRes(AvatarReq):
     id: int
-    user_id: int
-    link: str
-    name: str | None = None
-    details: str | None = None
