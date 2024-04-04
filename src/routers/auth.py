@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from datetime import timedelta
 from models.contacts_kvd import create_contact, ContactsKvd
 from models.user import User, create_user, get_user_by_email, get_user_by_id
+from src.services.auth_service import JwtTypeEnum, gen_jwt_res
 from src.services.user_profile_service import gen_default_profile
 from utils.jwt import get_payload_from_token, create_token
 from common.db import Db
@@ -61,27 +62,10 @@ def sign_in(
                 key="email",
                 value=user.email,
             ), session=session)
-    data = {
-        "id": user.id,
-    }
-    access_token = create_token(
-        data=data,
-        secret=ACCESS_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
-    refresh_token = create_token(
-        data=data,
-        secret=REFRESH_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
-    )
 
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+    res = gen_jwt_res(user_id=user.id, jwt_type=JwtTypeEnum.ACCESS)
+
+    return res
 
 
 @router.post("/refresh")
@@ -96,24 +80,6 @@ def refresh(body: Refresh, session: Db):
     if user is None:
         raise HTTPException(401, "Invalid token")
 
-    data = {
-        "id": user.id,
-    }
-    access_token = create_token(
-        data=data,
-        secret=ACCESS_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
-    )
-    refresh_token = create_token(
-        data=data,
-        secret=REFRESH_SECRET_KEY,
-        algorithm=ALGORITHM,
-        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
-    )
+    res = gen_jwt_res(user_id=user.id, jwt_type=JwtTypeEnum.REFRESH)
 
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+    return res
