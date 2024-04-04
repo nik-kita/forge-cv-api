@@ -1,12 +1,11 @@
 from pydantic import BaseModel
-from common.db import Db
 from models.avatar import Avatar
-from models.contacts_kvd import ContactsKvd, ContactsKvd, ContactsKvdRes
+from models.contacts_kvd import ContactsKvd, ContactsKvd
 from models.education import Education
 from models.experience import Experience
 from models.language import Language
 from models.profile import Profile
-from sqlmodel import Session, select, SQLModel
+from sqlmodel import Session, select
 from models.skill import Skill
 from models.user import User
 

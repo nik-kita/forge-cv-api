@@ -1,4 +1,4 @@
-from sqlmodel import create_engine, SQLModel, Session
+from sqlmodel import create_engine, Session
 from typing import Annotated
 from fastapi import Depends
 from common.config import SQLALCHEMY_URL

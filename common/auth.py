@@ -34,6 +34,7 @@ def _get_me(
         algorithms=[ALGORITHM],
     )
     me = get_user_by_id(payload["id"], session)
+    print(me)
     return me, session
 
 
