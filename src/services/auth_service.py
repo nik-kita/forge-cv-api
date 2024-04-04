@@ -24,13 +24,13 @@ def gen_jwt_res(user_id: int, jwt_type: JwtTypeEnum):
         data=data,
         secret=secret,
         algorithm=ALGORITHM,
-        expires_delta=expires_delta,
+        expires_delta=timedelta(minutes=expires_delta),
     )
     refresh_token = create_token(
         data=data,
-        secret=REFRESH_SECRET_KEY,
+        secret=secret,
         algorithm=ALGORITHM,
-        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+        expires_delta=timedelta(days=expires_delta),
     )
 
     return {
