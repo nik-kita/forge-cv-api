@@ -1,29 +1,30 @@
 from fastapi import APIRouter
 from common.db import Db
 from common.auth import Me_and_Session
-from src.services.user_profile_service import UpsertProfile, get_user_profile, upsert_profile
+from src.services import profile_service
+from schemas.profile_schema import ProfileRes, ProfileReq
 
-router = APIRouter()
+
+profile_router = APIRouter()
 
 
-@router.get('/{name}')
+@profile_router.get('/{name}')
 def get_profile_by_name(name: str, me_and_session: Me_and_Session):
     me, session = me_and_session
-    res = get_user_profile(user_id=me.id, profile_name=name, session=session)
+    res = profile_service.get(
+        user_id=me.id, profile_name=name, session=session)
 
     return res
 
 
-@router.post('/{name}')
-def upsert_profile_by_name(
-    name: str,
+@profile_router.post('/', response_model=ProfileRes)
+def upsert_profile(
     me_and_session: Me_and_Session,
     session: Db,
-    data: UpsertProfile,
+    data: ProfileReq,
 ):
     me, session = me_and_session
-    res = upsert_profile(
-        profile_name=name,
+    res = profile_service.upsert(
         user_id=me.id,
         data=data,
         session=session,

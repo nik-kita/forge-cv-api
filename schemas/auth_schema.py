@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from models.auth_provider import AuthProviderEnum
+from models.auth_provider_enum import AuthProviderEnum
 
 
 class SignIn(BaseModel):
