@@ -2,7 +2,7 @@ pip install \
     fastapi \
     sqlmodel \
     uvicorn \
-    jose \
+    python-jose \
     python-dotenv \
     google-auth \
     requests
