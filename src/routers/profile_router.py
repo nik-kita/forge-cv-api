@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from common.db import Db
 from common.auth import Me_and_Session
 from src.services import profile_service
-from schemas.profile import ProfileRes, ProfileReq
+from schemas.profile_schema import ProfileRes, ProfileReq
 
 
 profile_router = APIRouter()

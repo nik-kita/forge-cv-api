@@ -9,7 +9,7 @@ from common.config import (
 from fastapi import HTTPException
 from models.contacts_model import create_contact, ContactsKvd
 from models.user_model import User
-from schemas.auth import Refresh, SignIn
+from schemas.auth_schema import Refresh, SignIn
 from src.services import auth_service, user_service, profile_service
 from utils import jwt_util
 from common.db import Db

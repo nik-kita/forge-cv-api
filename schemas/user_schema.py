@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from schemas.profile import ProfileRes
+from schemas.profile_schema import ProfileRes
 
 
 class UserRes(BaseModel):

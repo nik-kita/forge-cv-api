@@ -1,7 +1,7 @@
 from models.profile_model import Profile
 from sqlmodel import Session, select
 from models.user_model import User
-from schemas.profile import ProfileReq
+from schemas.profile_schema import ProfileReq
 
 
 def gen_default(user: User, session: Session):

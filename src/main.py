@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from common.config import DB_NAME, SQLALCHEMY_URL
-from schemas.user import UserRes
+from schemas.user_schema import UserRes
 from .routers.auth_router import auth_router
 from .routers.profile_router import profile_router
 from contextlib import asynccontextmanager
