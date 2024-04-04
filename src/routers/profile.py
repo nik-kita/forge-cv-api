@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from common.db import Db
 from common.auth import Me_and_Session
-from src.services.user_profile_service import UpsertProfile, get_user_profile, upsert_profile
+from src.services.profile import UpsertProfile, get_user_profile, upsert_profile
 
 router = APIRouter()
 

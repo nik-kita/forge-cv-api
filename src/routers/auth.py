@@ -10,8 +10,8 @@ from fastapi import HTTPException
 from models.contacts_kvd import create_contact, ContactsKvd
 from models.user import User, create_user, get_user_by_email, get_user_by_id
 from schemas.auth import Refresh, SignIn
-from src.services.auth_service import JwtTypeEnum, gen_jwt_res
-from src.services.user_profile_service import gen_default_profile
+from src.services.auth import JwtTypeEnum, gen_jwt_res
+from src.services.profile import gen_default_profile
 from utils.jwt import get_payload_from_token
 from common.db import Db
 

@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import (
     HTTPAuthorizationCredentials,
     HTTPBearer,
@@ -34,7 +34,10 @@ def _get_me(
         algorithms=[ALGORITHM],
     )
     me = get_user_by_id(payload["id"], session)
-    print(me)
+
+    if not me:
+        raise HTTPException(status_code=401, detail="User not found")
+
     return me, session
 
 
