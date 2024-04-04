@@ -36,11 +36,6 @@ def create_token(
     algorithm: str,
     expires_delta: timedelta,
 ):
-
-    print(expires_delta)
-    print(type(expires_delta))
-    print(datetime.now(timezone.utc))
-    print(type(datetime.now(timezone.utc)))
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
