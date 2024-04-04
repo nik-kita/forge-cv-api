@@ -8,8 +8,8 @@ from schemas.language_schema import LanguageReq, LanguageRes
 from schemas.skill_schema import SkillReq, SkillRes
 
 
-class ProfileReq(BaseModel):
-    name: str
+class ModifyProfileReq(BaseModel):
+    name: str | None = None
 
     summary: str | None = None
     details: str | None = None
@@ -19,6 +19,10 @@ class ProfileReq(BaseModel):
     experience: list[ExperienceReq] | None = None
     languages: list[LanguageReq] | None = None
     avatar: AvatarReq | None = None
+
+
+class ProfileReq(ModifyProfileReq):
+    name: str
 
 
 class ProfileRes(BaseModel):

@@ -47,8 +47,7 @@ def sign_in(
                 value=user.email,
             ), session=session)
 
-    res = auth_service.gen_jwt_res(
-        user_id=user.id, jwt_type=auth_service.JwtTypeEnum.ACCESS)
+    res = auth_service.gen_jwt_res(user.id)
 
     return res
 
@@ -65,7 +64,6 @@ def refresh(body: Refresh, session: Db):
     if user is None:
         raise HTTPException(401, "Invalid token")
 
-    res = auth_service.gen_jwt_res(
-        user_id=user.id, jwt_type=auth_service.JwtTypeEnum.REFRESH)
+    res = auth_service.gen_jwt_res(user_id=user.id)
 
     return res

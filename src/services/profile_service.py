@@ -1,7 +1,7 @@
 from models.profile_model import Profile
 from sqlmodel import Session, select
 from models.user_model import User
-from schemas.profile_schema import ProfileReq
+from schemas.profile_schema import ModifyProfileReq, ProfileReq
 from fastapi import HTTPException
 
 
@@ -34,6 +34,55 @@ def delete(*, user_id: int, profile_id: int, session: Session):
 
     session.delete(profile)
     session.commit()
+
+
+def modify(
+    *,
+    user_id: int,
+    profile_id: int,
+    session: Session,
+    data: ModifyProfileReq,
+):
+    profile = session.get(Profile, profile_id)
+
+    if profile is None:
+        raise HTTPException(404, "Profile not found")
+    elif profile.user_id != user_id:
+        raise HTTPException(403, "Forbidden")
+
+    profile.name = data.name if data.name else profile.name
+    profile.summary = data.summary if data.summary else profile.summary
+    profile.details = data.details if data.details else profile.details
+
+    profile.contacts.extend([
+        c.pre_insert(user_id=user_id) for c in data.contacts
+    ]) if data.contacts else None
+
+    profile.education.extend([
+        ed.pre_insert(user_id=user_id) for ed in data.education
+    ]) if data.education else None
+
+    profile.experience.extend([
+        exp.pre_insert(user_id=user_id) for exp in data.experience
+    ]) if data.experience else None
+
+    profile.languages.extend([
+        l.pre_insert(user_id=user_id) for l in data.languages
+    ]) if data.languages else None
+
+    profile.skills.extend([
+        s.pre_insert(user_id=user_id) for s in data.skills
+    ]) if data.skills else None
+
+    profile.avatar = data.avatar.pre_insert(
+        user_id=user_id
+    ) if data.avatar else profile.avatar
+
+    session.add(profile)
+    session.commit()
+    session.refresh(profile)
+
+    return profile
 
 
 def upsert(

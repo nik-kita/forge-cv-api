@@ -4,33 +4,21 @@ from utils import jwt_util
 import enum
 
 
-class JwtTypeEnum(str, enum.Enum):
-    ACCESS = 'access',
-    REFRESH = 'refresh'
-
-
-def gen_jwt_res(user_id: int, jwt_type: JwtTypeEnum):
+def gen_jwt_res(user_id: int):
     data = {
         "id": user_id,
     }
-    secret, expires_delta = (
-        ACCESS_SECRET_KEY,
-        ACCESS_TOKEN_EXPIRE_MINUTES,
-    ) if jwt_type == JwtTypeEnum.ACCESS else (
-        REFRESH_SECRET_KEY,
-        REFRESH_TOKEN_EXPIRE_DAYS,
-    )
     access_token = jwt_util.create_token(
         data=data,
-        secret=secret,
+        secret=ACCESS_SECRET_KEY,
         algorithm=ALGORITHM,
-        expires_delta=timedelta(minutes=expires_delta),
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = jwt_util.create_token(
         data=data,
-        secret=secret,
+        secret=REFRESH_SECRET_KEY,
         algorithm=ALGORITHM,
-        expires_delta=timedelta(days=expires_delta),
+        expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
     )
 
     return {
