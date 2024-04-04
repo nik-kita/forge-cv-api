@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response, status
 from common.db import Db
 from common.auth import Me_and_Session
 from src.services import profile_service
@@ -31,3 +31,13 @@ def upsert_profile(
     )
 
     return res
+
+
+@profile_router.delete('/{profile_id}', status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+def delete_profile(profile_id: int, me_and_session: Me_and_Session):
+    me, session = me_and_session
+    profile_service.delete(
+        user_id=me.id,
+        profile_id=profile_id,
+        session=session,
+    )

@@ -2,6 +2,7 @@ from models.profile_model import Profile
 from sqlmodel import Session, select
 from models.user_model import User
 from schemas.profile_schema import ProfileReq
+from fastapi import HTTPException
 
 
 def gen_default(user: User, session: Session):
@@ -21,6 +22,18 @@ def get(*, user_id: int, profile_name: str, session: Session):
     profile = session.exec(sql_query).first()
 
     return profile
+
+
+def delete(*, user_id: int, profile_id: int, session: Session):
+    profile = session.get(Profile, profile_id)
+
+    if profile is None:
+        raise HTTPException(404, "Profile not found")
+    elif profile.user_id != user_id:
+        raise HTTPException(403, "Forbidden")
+
+    session.delete(profile)
+    session.commit()
 
 
 def upsert(
