@@ -4,7 +4,7 @@ from models.user import User
 from schemas.profile import UpsertProfile
 
 
-def gen_default_profile(user: User, session: Session):
+def gen_default(user: User, session: Session):
     default_profile = Profile(user_id=user.id)
     session.add(default_profile)
     session.commit()
@@ -13,7 +13,7 @@ def gen_default_profile(user: User, session: Session):
     return default_profile
 
 
-def get_user_profile(*, user_id: int, profile_name: str, session: Session):
+def get(*, user_id: int, profile_name: str, session: Session):
     sql_query = select(Profile).where(
         Profile.user_id == user_id,
         Profile.name == profile_name,
@@ -23,26 +23,49 @@ def get_user_profile(*, user_id: int, profile_name: str, session: Session):
     return profile
 
 
-def upsert_profile(
+def upsert(
     *,
     user_id: int,
-    profile_name: str,
     data: UpsertProfile,
     session: Session,
 ):
-    profile = get_user_profile(
-        user_id=user_id, profile_name=profile_name, session=session)
+    profile = get(
+        user_id=user_id, profile_name=data.name, session=session)
 
     if not profile:
         profile = Profile(
             user_id=user_id,
-            name=profile_name,
+            name=data.name,
         )
 
     if data.contacts:
         for c in data.contacts:
             c.user_id = user_id
-        profile.contacts.extend(data.contacts)
+        profile.contacts = data.contacts
+
+    if data.education:
+        for ed in data.education:
+            ed.user_id = user_id
+        profile.education = data.education
+
+    if data.experience:
+        for exp in data.experience:
+            exp.user_id = user_id
+        profile.experience = data.experience
+
+    if data.languages:
+        for l in data.languages:
+            l.user_id = user_id
+        profile.languages = data.languages
+
+    if data.skills:
+        for s in data.skills:
+            s.user_id = user_id
+        profile.skills = data.skills
+
+    if data.avatar:
+        data.avatar.user_id = user_id
+        profile.avatar = data.avatar
 
     session.add(profile)
     session.commit()

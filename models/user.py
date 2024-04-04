@@ -1,6 +1,8 @@
 from sqlmodel import select, Session, Relationship
 from sqlalchemy import orm
-from .profile import Profile, ProfileRes
+
+from schemas.profile import UpsertProfileRes
+from .profile import Profile
 from .auth_provider import AuthProvider, AuthProviderEnum
 from sqlmodel import Field, SQLModel
 
@@ -24,7 +26,7 @@ class User(BaseUser, table=True):
 
 
 class UserRes(BaseUser):
-    profiles: list[ProfileRes] = []
+    profiles: list[UpsertProfileRes] = []
 
 
 def get_user_by_email(email: str, session: Session):

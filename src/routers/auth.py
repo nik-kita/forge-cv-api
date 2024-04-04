@@ -11,7 +11,7 @@ from models.contacts_kvd import create_contact, ContactsKvd
 from models.user import User, create_user, get_user_by_email, get_user_by_id
 from schemas.auth import Refresh, SignIn
 from src.services.auth import JwtTypeEnum, gen_jwt_res
-from src.services.profile import gen_default_profile
+from src.services.profile import gen_default
 from utils.jwt import get_payload_from_token
 from common.db import Db
 
@@ -38,7 +38,7 @@ def sign_in(
             User(email=data["email"], sub=data["sub"],
                  auth=body.auth_provider), session
         )
-        profile = gen_default_profile(user=user, session=session)
+        profile = gen_default(user=user, session=session)
 
         if user.email:
             create_contact(contact=ContactsKvd(

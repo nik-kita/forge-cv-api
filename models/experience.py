@@ -2,10 +2,6 @@ from sqlmodel import SQLModel, Field
 
 
 class BaseExperience(SQLModel):
-    __tablename__ = 'experiences'
-    id: int | None = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key='users.id', nullable=False)
-    profile_id: int | None = Field(foreign_key='profiles.id')
     company: str = Field(nullable=False)
     from_date: str | None
     to_date: str | None
@@ -18,3 +14,6 @@ class BaseExperience(SQLModel):
 
 class Experience(BaseExperience, table=True):
     __tablename__ = "experiences"
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key='users.id', nullable=False)
+    profile_id: int | None = Field(foreign_key='profiles.id')
