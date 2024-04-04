@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-from models.avatar_model import Avatar
 from schemas.avatar_schema import AvatarReq, AvatarRes
 from schemas.contact_schema import ContactReq, ContactRes
 from schemas.education_schema import EducationReq, EducationRes
@@ -10,7 +9,6 @@ from schemas.skill_schema import SkillReq, SkillRes
 
 
 class ProfileReq(BaseModel):
-    user_id: int
     name: str
 
     summary: str | None = None

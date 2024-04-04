@@ -8,7 +8,7 @@ from schemas.profile_schema import ProfileRes, ProfileReq
 profile_router = APIRouter()
 
 
-@profile_router.get('/{name}')
+@profile_router.get('/{name}', response_model_include=ProfileRes)
 def get_profile_by_name(name: str, me_and_session: Me_and_Session):
     me, session = me_and_session
     res = profile_service.get(
