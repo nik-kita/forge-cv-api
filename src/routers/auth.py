@@ -19,12 +19,12 @@ from fastapi import HTTPException
 
 from pydantic import BaseModel
 from datetime import timedelta
-from database.models.contacts_kvd import create_contact, ContactsKvd
-from database.models.user import User, create_user, get_user_by_email, get_user_by_id
+from models.contacts_kvd import create_contact, ContactsKvd
+from models.user import User, create_user, get_user_by_email, get_user_by_id
 from src.services.user_profile_service import gen_default_profile
 from src.utils.jwt import get_payload_from_token, create_token
-from database.core import Db
-from database.models.auth_provider import AuthProviderRaw as AuthProvider
+from common.db import Db
+from models.auth_provider import AuthProviderEnum
 
 router = APIRouter()
 
@@ -40,7 +40,7 @@ oauth2_schema = HTTPBearer(
 
 class SignIn(BaseModel):
     credential: str
-    auth_provider: AuthProvider
+    auth_provider: AuthProviderEnum
 
 
 class Refresh(BaseModel):

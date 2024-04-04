@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from sqlmodel import select
 from .config import DB_NAME, SQLALCHEMY_URL
-from database.core import Db
-from database.models.profile import Profile
-from database.models.user import UserRes, User
+from common.db import Db
+from models.profile import Profile
+from models.user import UserRes, User
 from .routers.auth import Me, router as auth_router
 from .routers.profile import router as profile_router
 from contextlib import asynccontextmanager

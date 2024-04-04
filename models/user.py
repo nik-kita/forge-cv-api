@@ -1,13 +1,19 @@
 from sqlmodel import select, Session, Relationship
 from sqlalchemy import orm
-from .versions.user_ed2df492986b import Userced2df492986b
 from .profile import Profile, ProfileRes
+from .auth_provider import AuthProvider, AuthProviderEnum
+from sqlmodel import Field, SQLModel
 
 
-BaseUser = Userced2df492986b
+class BaseUser(SQLModel):
+    __tablename__ = "users"
+    id: int | None = Field(default=None, primary_key=True)
+    email: str | None = Field(str, unique=True)
+    sub: str | None = Field(str, unique=True)
+    auth: AuthProviderEnum = Field(AuthProvider)
 
 
-class User(Userced2df492986b, table=True):
+class User(BaseUser, table=True):
     __tablename__ = "users"
 
     profiles: list[Profile] = Relationship(

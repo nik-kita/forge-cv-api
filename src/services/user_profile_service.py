@@ -1,14 +1,14 @@
 from pydantic import BaseModel
-from database.core import Db
-from database.models.avatar import Avatar
-from database.models.contacts_kvd import ContactsKvd, ContactsKvd, ContactsKvdRes
-from database.models.education import Education
-from database.models.experience import Experience
-from database.models.language import Language
-from database.models.profile import Profile
+from common.db import Db
+from models.avatar import Avatar
+from models.contacts_kvd import ContactsKvd, ContactsKvd, ContactsKvdRes
+from models.education import Education
+from models.experience import Experience
+from models.language import Language
+from models.profile import Profile
 from sqlmodel import Session, select, SQLModel
-from database.models.skill import Skill
-from database.models.user import User
+from models.skill import Skill
+from models.user import User
 
 
 def gen_default_profile(user: User, session: Session):
