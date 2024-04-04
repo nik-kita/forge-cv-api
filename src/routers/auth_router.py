@@ -30,7 +30,7 @@ def sign_in(
     except ValueError:
         raise HTTPException(401, "Invalid token")
 
-    user = user.get_by_email(data["email"], session)
+    user = user_service.get_by_email(data["email"], session)
 
     if not user:
         user = user_service.create(
