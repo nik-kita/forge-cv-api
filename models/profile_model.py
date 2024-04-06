@@ -3,6 +3,7 @@ from models.avatar_model import Avatar
 from models.education_model import Education
 from models.experience_model import Experience
 from models.language_model import Language
+from models.profiles_many_to_many import ProfilesContacts, ProfilesEducations, ProfilesExperiences, ProfilesLanguages, ProfilesSkills
 from models.skill_model import Skill
 from models.contact_model import Contact
 
@@ -20,9 +21,10 @@ class Profile(SQLModel, table=True):
     summary: str | None
     details: str | None
 
-    contacts: list[Contact] = Relationship()
-    skills: list[Skill] = Relationship()
-    education: list[Education] = Relationship()
-    experience: list[Experience] = Relationship()
+    contacts: list[Contact] = Relationship(link_model=ProfilesContacts)
+    skills: list[Skill] = Relationship(link_model=ProfilesSkills)
+    education: list[Education] = Relationship(link_model=ProfilesEducations)
+    experience: list[Experience] = Relationship(link_model=ProfilesExperiences)
+    languages: list[Language] = Relationship(link_model=ProfilesLanguages)
+
     avatar: Avatar = Relationship()
-    languages: list[Language] = Relationship()
