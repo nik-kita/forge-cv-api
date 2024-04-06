@@ -55,26 +55,26 @@ def modify(
     profile.details = data.details if data.details else profile.details
 
     profile.contacts.extend([
-        c.pre_insert(user_id=user_id) for c in data.contacts
+        c.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for c in data.contacts
     ]) if data.contacts else None
 
     profile.education.extend([
-        ed.pre_insert(user_id=user_id) for ed in data.education
+        ed.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for ed in data.education
     ]) if data.education else None
 
     profile.experience.extend([
-        exp.pre_insert(user_id=user_id) for exp in data.experience
+        exp.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for exp in data.experience
     ]) if data.experience else None
 
     profile.languages.extend([
-        l.pre_insert(user_id=user_id) for l in data.languages
+        l.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for l in data.languages
     ]) if data.languages else None
 
     profile.skills.extend([
-        s.pre_insert(user_id=user_id) for s in data.skills
+        s.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for s in data.skills
     ]) if data.skills else None
 
-    profile.avatar = data.avatar.pre_insert(
+    profile.avatar = data.avatar.pre_upsert(
         user_id=user_id
     ) if data.avatar else profile.avatar
 
@@ -98,28 +98,34 @@ def upsert(
         name=data.name,
     )
 
+    if not profile.id:
+        session.add(profile)
+        session.commit()
+        session.refresh(profile)
+
     profile.contacts = [
-        c.pre_insert(user_id=user_id) for c in data.contacts
+        c.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for c in data.contacts
     ] if data.contacts else []
 
     profile.education = [
-        ed.pre_insert(user_id=user_id) for ed in data.education
+        ed.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for ed in data.education
     ] if data.education else []
 
     profile.experience = [
-        exp.pre_insert(user_id=user_id) for exp in data.experience
+        exp.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for exp in data.experience
     ] if data.experience else []
 
     profile.languages = [
-        l.pre_insert(user_id=user_id) for l in data.languages
+        l.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for l in data.languages
     ] if data.languages else []
 
     profile.skills = [
-        s.pre_insert(user_id=user_id) for s in data.skills
+        s.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for s in data.skills
     ] if data.skills else []
 
-    profile.avatar = data.avatar.pre_insert(
-        user_id=user_id
+    profile.avatar = data.avatar.pre_upsert(
+        user_id=user_id,
+        session=session,
     ) if data.avatar else None
 
     session.add(profile)
