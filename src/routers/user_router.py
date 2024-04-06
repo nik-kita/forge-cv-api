@@ -33,6 +33,4 @@ def my(me_and_session: Me_and_Session, target: Annotated[str, Depends(only_targe
     me, session = me_and_session
     result = user_service.all_my(me.id, target_model[target], session)
 
-    print(result)
-
     return result
