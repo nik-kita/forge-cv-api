@@ -8,6 +8,7 @@ from models import (
     profile_model,
     skill_model,
     user_model,
+    profiles_many_to_many,
 )
 from sqlmodel import SQLModel
 from logging.config import fileConfig
@@ -27,6 +28,7 @@ from os import getenv
     profile_model,
     skill_model,
     user_model,
+    profiles_many_to_many,
 )
 
 load_dotenv()

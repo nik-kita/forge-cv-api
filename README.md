@@ -2,4 +2,4 @@
 
 * structure: ![](cv-builder.svg)
 
-* [more details](./alembic/README.md)
+* [more details](./migrations/README.md)

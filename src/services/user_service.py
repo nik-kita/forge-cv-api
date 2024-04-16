@@ -1,5 +1,5 @@
 from models.user_model import User
-from sqlmodel import Session, select
+from sqlmodel import SQLModel, Session, select
 
 
 def get_by_email(email: str, session: Session):
@@ -25,3 +25,10 @@ def create(user: User, session: Session):
     session.refresh(user)
 
     return user
+
+
+def all_my(user_id: int, target: SQLModel, session: Session):
+    sql_q = select(target).where(target.user_id == user_id)
+    result = session.exec(sql_q).all()
+
+    return result
