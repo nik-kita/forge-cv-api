@@ -22,11 +22,13 @@ def sign_in(
     body: SignIn,
     session: Db,
 ):
+    print(body)
     data = None
     try:
         data = id_token.verify_oauth2_token(
             body.credential, requests.Request(), GOOGLE_CLIENT_ID
         )
+        print(data)
     except ValueError:
         raise HTTPException(401, "Invalid token")
 
@@ -67,3 +69,8 @@ def refresh(body: Refresh, session: Db):
     res = auth_service.gen_jwt_res(user_id=user.id)
 
     return res
+
+
+@auth_router.post("/logout")
+def logout():
+    return {}   

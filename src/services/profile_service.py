@@ -103,6 +103,8 @@ def upsert(
         session.commit()
         session.refresh(profile)
 
+    profile.summary = data.summary
+
     profile.contacts = [
         c.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for c in data.contacts
     ] if data.contacts else []
