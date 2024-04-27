@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import TypeVar, Generic
 from schemas.avatar_schema import AvatarReq, AvatarRes
 from schemas.contact_schema import ContactReq, ContactRes
 from schemas.education_schema import EducationReq, EducationRes
@@ -7,6 +7,7 @@ from schemas.experience_schema import ExperienceReq, ExperienceRes
 from schemas.language_schema import LanguageReq, LanguageRes
 from schemas.skill_schema import SkillReq, SkillRes
 
+T = TypeVar('T')
 
 class ModifyProfileReq(BaseModel):
     name: str | None = None
@@ -38,3 +39,9 @@ class ProfileRes(BaseModel):
     experience: list[ExperienceRes] = []
     avatar: AvatarRes | None = None
     languages: list[LanguageRes] = []
+
+class PaginatedRes(BaseModel, Generic[T]):
+    items: list[T]
+    total: int
+    offset: int
+    
