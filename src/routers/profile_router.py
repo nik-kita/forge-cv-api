@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Response, status
 from common.auth import Me_and_Session
 from src.services import profile_service
-from schemas.profile_schema import ModifyProfileReq, ProfileRes, ProfileReq
+from schemas.profile_schema import ModifyProfileReq, PaginatedRes, ProfileRes, ProfileReq
 
 
 profile_router = APIRouter()
@@ -12,6 +12,14 @@ def get_profile_by_name(name: str, me_and_session: Me_and_Session) -> ProfileRes
     me, session = me_and_session
     res = profile_service.get(
         user_id=me.id, profile_name=name, session=session)
+
+    return res
+
+
+@profile_router.get('/')
+def get_all_profiles(me_and_session: Me_and_Session) -> PaginatedRes[ProfileRes]:
+    me, session = me_and_session
+    res = profile_service.get_all(user_id=me.id, session=session)
 
     return res
 

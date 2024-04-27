@@ -1,5 +1,5 @@
 from models.profile_model import Profile
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from models.user_model import User
 from schemas.profile_schema import ModifyProfileReq, ProfileReq
 from fastapi import HTTPException
@@ -22,6 +22,23 @@ def get(*, user_id: int, profile_name: str, session: Session):
     profile = session.exec(sql_query).first()
 
     return profile
+
+
+def get_all(*, user_id: int, session: Session, offset: int = 0, limit: int = 10):
+    sql_query_profiles = select(Profile).where(
+        Profile.user_id == user_id
+    ).offset(offset).limit(limit)
+    sql_query_total = select(func.count()).select_from(Profile).where(
+        Profile.user_id == user_id
+    )
+    total = session.exec(sql_query_total).one()
+    profiles = session.exec(sql_query_profiles).all()
+
+    return {
+        'items': profiles,
+        'total': total,
+        'offset': offset,
+    }
 
 
 def delete(*, user_id: int, profile_id: int, session: Session):
@@ -102,6 +119,8 @@ def upsert(
         session.add(profile)
         session.commit()
         session.refresh(profile)
+
+    profile.summary = data.summary
 
     profile.contacts = [
         c.pre_upsert(user_id=user_id, profile_id=profile.id, session=session) for c in data.contacts
