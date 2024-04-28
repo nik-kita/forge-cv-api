@@ -17,7 +17,7 @@ from common.db import Db
 auth_router = APIRouter()
 
 
-@auth_router.post("/sign-in")
+@auth_router.post("/sign-in", tags=['public'])
 def sign_in(
     body: SignIn,
     session: Db,
