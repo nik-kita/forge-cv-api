@@ -1,5 +1,5 @@
 from sqlmodel import Relationship
-from sqlalchemy import orm
+from sqlalchemy import orm, UniqueConstraint
 
 from models.avatar_model import Avatar
 from models.contact_model import Contact
@@ -23,6 +23,11 @@ def gen_relation_ondelete_delete():
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
+    __table_args__ = (
+        UniqueConstraint('nik', postgresql_nulls_not_distinct=True),
+    )
+
+    nik: str | None = Field(default=None)
 
     id: int | None = Field(default=None, primary_key=True)
     email: str | None = Field(str, unique=True)
