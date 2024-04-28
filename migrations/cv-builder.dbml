@@ -7,8 +7,9 @@ Enum auth_provider {
 }
 
 Table users as u {
-  email varchar [unique]
-  sub varchar [unique]
+  email varchar [unique, not null]
+  nik varchar [unique]
+  sub varchar [unique, not null]
   auth auth_provider [not null]
   id integer [pk, increment, not null]
 }
