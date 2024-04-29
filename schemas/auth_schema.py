@@ -10,3 +10,13 @@ class SignIn(BaseModel):
 
 class Refresh(BaseModel):
     refresh_token: str
+
+
+class RefreshRes(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+    nik: None | str = None
+
+class SignInRes(RefreshRes):
+    pass
