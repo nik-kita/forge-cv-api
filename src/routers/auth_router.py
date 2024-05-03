@@ -9,7 +9,7 @@ from common.config import (
 from fastapi import HTTPException
 from models.contact_model import Contact
 from models.user_model import User
-from schemas.auth_schema import Refresh, SignIn
+from schemas.auth_schema import Refresh, RefreshRes, SignIn, SignInRes
 from src.services import auth_service, user_service, profile_service, contact_service
 from utils import jwt_util
 from common.db import Db
@@ -21,8 +21,7 @@ auth_router = APIRouter()
 def sign_in(
     body: SignIn,
     session: Db,
-):
-    print(body)
+) -> SignInRes:
     data = None
     try:
         data = id_token.verify_oauth2_token(
@@ -50,12 +49,13 @@ def sign_in(
             ), session=session)
 
     res = auth_service.gen_jwt_res(user.id)
+    res['nik']= user.nik
 
     return res
 
 
 @auth_router.post("/refresh")
-def refresh(body: Refresh, session: Db):
+def refresh(body: Refresh, session: Db) -> RefreshRes:
     payload = jwt_util.get_payload_from_token(
         token=body.refresh_token,
         secret=REFRESH_SECRET_KEY,
@@ -67,10 +67,11 @@ def refresh(body: Refresh, session: Db):
         raise HTTPException(401, "Invalid token")
 
     res = auth_service.gen_jwt_res(user_id=user.id)
+    res['nik']= user.nik
 
     return res
 
 
 @auth_router.post("/logout")
 def logout():
-    return {}   
+    return {}

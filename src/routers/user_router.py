@@ -38,7 +38,7 @@ def my(me_and_session: Me_and_Session, target: Annotated[str, Depends(only_targe
     return result
 
 
-@user_router.patch('/nik/{nik}')
+@user_router.put('/nik/{nik}')
 def modify_nik(nik: str, me_and_session: Me_and_Session) -> PublicUserRes:
     me, session = me_and_session
     (success, user_or_fail_reason) = user_service.modify(
