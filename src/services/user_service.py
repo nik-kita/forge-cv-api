@@ -63,8 +63,8 @@ def modify(
             return (False, "User already has that nik")
         elif not is_nik_free(nik=nik, session=session):
             return (False, f"The '{nik}' nik is already taken")
-        else:
-            user.nik = nik
+    
+    user.nik = nik
 
     session.add(user)
     session.commit()

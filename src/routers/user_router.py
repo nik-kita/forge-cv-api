@@ -46,7 +46,7 @@ def modify_nik(nik: str, me_and_session: Me_and_Session) -> PublicUserRes:
 
     if not success:
         raise HTTPException(400, user_or_fail_reason)
-
+    
     return user_or_fail_reason
 
 @user_router.delete('/nik', status_code=204)

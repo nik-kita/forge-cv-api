@@ -8,4 +8,4 @@ class UserRes(BaseModel):
 
 
 class PublicUserRes(BaseModel):
-    nik: str
+    nik: str | None
