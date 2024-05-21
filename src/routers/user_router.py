@@ -49,6 +49,12 @@ def modify_nik(nik: str, me_and_session: Me_and_Session) -> PublicUserRes:
 
     return user_or_fail_reason
 
+@user_router.delete('/nik', status_code=204)
+def rm_nik(me_and_session: Me_and_Session) -> None:
+    me, session = me_and_session
+    user_service.modify(user_id=me.id, session=session)
+
+    return None
 
 @user_router.get('/{nik}', tags=['public'])
 def get_public_by_nik(nik: str, session: Db) -> PublicUserRes:
