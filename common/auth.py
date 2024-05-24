@@ -24,6 +24,31 @@ _oauth2_schema = HTTPBearer(
 """,
 )
 
+_oauth2_schema_optional = HTTPBearer(auto_error=False)
+
+
+def _get_me_optional(
+    auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(
+        _oauth2_schema_optional)],
+    session: Db,
+):
+    print(auth_credentials)
+
+    if auth_credentials:
+        payload = jwt_util.get_payload_from_token(
+            token=auth_credentials.credentials,
+            secret=ACCESS_SECRET_KEY,
+            algorithms=[ALGORITHM],
+        )
+        me = user_service.get_by_id(payload["id"], session)
+
+        if not me:
+            raise HTTPException(status_code=401, detail="User not found")
+
+        return me, session
+
+    return None
+
 
 def _get_me(
     auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(_oauth2_schema)],
@@ -43,3 +68,4 @@ def _get_me(
 
 
 Me_and_Session = Annotated[tuple[User, Db], Depends(_get_me)]
+MeOptional_and_Session = Annotated[tuple[User, Db], Depends(_get_me_optional)]
