@@ -3,6 +3,7 @@ from sqlmodel import Session, select, func
 from models.user_model import User
 from schemas.profile_schema import ModifyProfileReq, ProfileReq
 from fastapi import HTTPException
+from src.services import user_service
 
 
 def gen_default(user: User, session: Session):
@@ -24,7 +25,20 @@ def get(*, user_id: int, profile_name: str, session: Session):
     return profile
 
 
-def get_all(*, user_id: int, session: Session, offset: int = 0, limit: int = 10):
+def get_all_public(*, nik: str, session: Session, offset: int = 0, limit: int = 10):
+    user = user_service.get_by_nik(nik, session)
+
+    if not user:
+        return (False, f"User '{nik}' not found")
+
+    all_private = get_all_own(
+        user_id=user.id, session=session, offset=offset, limit=limit)
+    all_public = all_private  # TODO
+
+    return all_public
+
+
+def get_all_own(*, user_id: int, session: Session, offset: int = 0, limit: int = 10):
     sql_query_profiles = select(Profile).where(
         Profile.user_id == user_id
     ).offset(offset).limit(limit)
