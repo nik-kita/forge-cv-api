@@ -1,10 +1,27 @@
 from fastapi import APIRouter, Response, status
+from fastapi.responses import JSONResponse
 from common.auth import Me_and_Session
+from common.db import Db
+from schemas.exception_400_schema import Exception_400
 from src.services import profile_service
 from schemas.profile_schema import ModifyProfileReq, PaginatedRes, ProfileRes, ProfileReq
-
+from src.services import user_service
 
 profile_router = APIRouter()
+
+
+@profile_router.get('/public/{nik}', responses={
+    400: {"model": Exception_400}
+})
+def get_public_profiles_by_nik(nik: str, session: Db) -> ProfileRes | None:
+    user = user_service.get_by_nik(nik=nik, session=session)
+
+    if not user:
+        return JSONResponse(status_code=400, content=Exception_400(message=f"User with nik '{nik} not found").model_dump())
+
+    res = profile_service.get_all(user_id=user.id, session=session)
+
+    return res
 
 
 @profile_router.get('/{name}')

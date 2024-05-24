@@ -9,6 +9,12 @@ def get_by_email(email: str, session: Session):
 
     return user
 
+def get_by_nik(nik: str, session: Session):
+    sql_query = select(User).where(User.nik == nik)
+    user = session.exec(sql_query).first()
+
+    return user
+
 
 def get_by_id(user_id: int, session: Session):
     sql_query = select(User).where(User.id == user_id)
