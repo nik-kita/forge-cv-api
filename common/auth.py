@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Header
 from fastapi.security import (
     HTTPAuthorizationCredentials,
     HTTPBearer,
@@ -28,6 +28,8 @@ _oauth2_schema = HTTPBearer(
 def _get_me(
     auth_credentials: Annotated[HTTPAuthorizationCredentials, Depends(_oauth2_schema)],
     session: Db,
+    # @description: For only swagger purpose... especially for ts types generation
+    authorization: Annotated[str | None, Header()] = None,
 ):
     payload = jwt_util.get_payload_from_token(
         token=auth_credentials.credentials,

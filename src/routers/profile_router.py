@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Response, status
+from typing import Annotated
+from fastapi import APIRouter, Response, status, Header
 from fastapi.responses import JSONResponse
 from common.auth import Me_and_Session
 from common.db import Db
@@ -13,7 +14,7 @@ profile_router = APIRouter()
 @profile_router.get('/public/{nik}', responses={
     400: {"model": Exception_400}
 })
-def get_public_profiles_by_nik(nik: str, session: Db) -> ProfileRes | None:
+def get_public_profiles_by_nik(nik: str, session: Db) -> PaginatedRes[ProfileRes]:
     user = user_service.get_by_nik(nik=nik, session=session)
 
     if not user:
