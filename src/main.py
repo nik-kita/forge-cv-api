@@ -43,3 +43,8 @@ async def get_me(me_and_session: Me_and_Session) -> UserRes:
     me, _ = me_and_session
 
     return me
+
+
+@app.get('/hello-world')
+async def hello_world():
+    return {"message": "Hello World!"}
