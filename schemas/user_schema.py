@@ -9,3 +9,7 @@ class UserRes(BaseModel):
 
 class PublicUserRes(BaseModel):
     nik: str | None
+
+
+class HelloWorldRes(BaseModel):
+    message: str

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from common.config import DB_NAME, SQLALCHEMY_URL, UI_URL
-from schemas.user_schema import UserRes
+from schemas.user_schema import HelloWorldRes, UserRes
 from .routers.user_router import user_router
 from .routers.auth_router import auth_router
 from .routers.profile_router import profile_router
@@ -46,5 +46,5 @@ async def get_me(me_and_session: Me_and_Session) -> UserRes:
 
 
 @app.get('/hello-world')
-async def hello_world():
+async def hello_world() -> HelloWorldRes:
     return {"message": "Hello World!"}
